@@ -1,0 +1,31 @@
+#svg {
+  pointer-events: all;
+
+  #svg rect {
+    fill: LightSlateGray;
+  }
+}
+
+#svg text {
+  pointer-events: none;
+}
+
+.handle.control {
+  fill: white;
+}
+
+.handle.start {
+  fill: pink;
+}
+
+.handle.end {
+  fill: yellow;
+}
+
+.handle:hover {
+  fill: red;
+}
+
+.handle:active {
+  fill: orange;
+}
