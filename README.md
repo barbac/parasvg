@@ -1,8 +1,10 @@
 # parasvg
 
-The idea is to parametirize svg files so they can adjust to given measurements.
+The idea is to parameterize svg files so they can adjust to given measurements.
 
 ## Demo
+only works on firefox at the moment due to chrome deleting some old svg api.
+
 https://barbac.github.io/parasvg/
 
 
