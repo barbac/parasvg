@@ -2,6 +2,59 @@ import React, { useState, useRef, useLayoutEffect } from "react";
 import { pathDataToPoints } from "../pathDataToPoints.js";
 import Handles from "../Handles.jsx";
 
+function Controls({ onChange }) {
+  let options = {
+    waist: 560,
+    torso: 400,
+    // armsCyeX: 120,
+    // armsCyeY: 353.00001,
+    shoulderToWaist: 680,
+    neckWidth: 200,
+    neckHeight: 180
+  };
+  let controls = [];
+  for (const option in options) {
+    const value = options[option];
+
+    controls.push(
+      <div className="controls">
+        <label key={option}>
+          <div>
+            <div>{value}</div>
+            <div>
+              <input
+                min="10"
+                max="1700"
+                type="range"
+                value={value}
+                onChange={element => {
+                  const newValue = element.target.valueAsNumber;
+                  const newOptions = Object.assign({}, options, {
+                    [option]: newValue
+                  });
+                  onChange(newOptions);
+                }}
+              />
+            </div>
+          </div>
+          <div>{option}</div>
+        </label>
+      </div>
+    );
+  }
+  return controls;
+}
+
+const default_values = {
+  waist: 560,
+  torso: 400,
+  // armsCyeX: 120,
+  // armsCyeY: 353.00001,
+  shoulderToWaist: 680,
+  neckWidth: 200,
+  neckHeight: 180
+};
+
 export function TankTop() {
   const firstRender = useRef(true);
   const pathRef = React.createRef();
@@ -20,13 +73,16 @@ export function TankTop() {
   }, [pathRef]);
   console.log("points", points);
 
-  const [waist, setWaist] = useState(560);
-  const [torso, setTorso] = useState(400);
+  const [options, setOptions] = useState(default_values);
+  // const [waist, setWaist] = useState(560);
+  // const [torso, setTorso] = useState(400);
   // const [armsCyeX, setArmsCyeX] = useState(120);
   // const [armsCyeY, setArmsCyeY] = useState(353.00001);
-  const [shoulderToWaist, setShoulderToWaist] = useState(680);
-  const [neckWidth, setNeckWidth] = useState(200);
-  const [neckHeight, setNeckHeight] = useState(180);
+  // const [shoulderToWaist, setShoulderToWaist] = useState(680);
+  // const [neckWidth, setNeckWidth] = useState(200);
+  // const [neckHeight, setNeckHeight] = useState(180);
+
+  const { waist, torso, shoulderToWaist, neckWidth, neckHeight } = options;
 
   const width = waist;
   const height = shoulderToWaist;
@@ -50,61 +106,17 @@ export function TankTop() {
   const viewBox = `-25 -25 ${width + 40} ${height + 40} `;
 
   return (
-    <div>
+    <div className="container">
       <form>
-        <label>
-          waist {waist}
-          <input
-            min={Number.parseInt(neckWidth * 2.6)}
-            max="1700"
-            type="range"
-            value={waist}
-            onChange={e => setWaist(e.target.valueAsNumber)}
-          />
-        </label>
-        <label>
-          torso {torso}
-          <input
-            min={neckHeight}
-            max={height - neckWidth}
-            type="range"
-            value={torso}
-            onChange={e => setTorso(e.target.valueAsNumber)}
-          />
-        </label>
-        <label>
-          shoulder to waist {shoulderToWaist}
-          <input
-            min={neckHeight}
-            max="1500"
-            value={shoulderToWaist}
-            type="range"
-            onChange={e => setShoulderToWaist(e.target.valueAsNumber)}
-          />
-        </label>
-        <label>
-          neck width {neckWidth}
-          <input
-            min="10"
-            max="500"
-            type="range"
-            value={neckWidth}
-            onChange={e => setNeckWidth(e.target.valueAsNumber)}
-          />
-        </label>
-        <label>
-          neck height {neckHeight}
-          <input
-            min="10"
-            max="500"
-            type="range"
-            value={neckHeight}
-            onChange={e => setNeckHeight(e.target.valueAsNumber)}
-          />
-        </label>
+        <Controls options={options} onChange={setOptions} />
+        <input
+          value="reset"
+          type="button"
+          onClick={() => setOptions(default_values)}
+        />
       </form>
 
-      <div>
+      <div className="svg-container">
         <svg viewBox={viewBox} style={{ height: "90vh" }} id="svg">
           <rect width={width} height={height} />
           <g stroke="#000" fill="#fff">
