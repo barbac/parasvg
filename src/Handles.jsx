@@ -11,8 +11,11 @@ export default function Handles({ points }) {
   return (
     <React.Fragment>
       {points.map(([x, y, type], i) => (
-        <g key={i}>
-          <circle cx={x} cy={y} className={`handle ${type}`} r="15" />
+        <g
+          key={i}
+          className="handle"
+        >
+          <circle cx={x} cy={y} className={`${type}`} r="15" />
           <text x={x} y={y}>
             {i}
           </text>

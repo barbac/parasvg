@@ -1,0 +1,65 @@
+body {
+  background-color: #313131;
+  color: white;
+}
+
+.container {
+    display: flex;
+
+    form {
+        text-align: right;
+    }
+
+    .controls {
+        padding: 20px;
+    }
+    .controls label {
+        display: flex;
+
+        div:last-of-type {
+            padding-left: 20px;
+        }
+    }
+}
+
+#svg {
+  pointer-events: all;
+
+  #svg rect {
+    fill: LightSlateGray;
+  }
+}
+
+#svg text {
+  pointer-events: none;
+}
+
+.handle {
+    // * {
+    //     pointer-events: none;
+    // }
+
+    text {
+        user-select: none;
+    }
+
+    circle.control {
+        fill: white;
+    }
+
+    circle.start {
+        fill: pink;
+    }
+
+    circle.end {
+        fill: yellow;
+    }
+
+    circle:hover {
+        fill: red;
+    }
+
+    circle:active {
+        fill: orange;
+    }
+}
