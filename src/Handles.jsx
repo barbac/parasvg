@@ -3,7 +3,7 @@ import { controlTypes } from "./pathDataToPoints.js";
 
 const showCurveControls = true;
 
-export default function Handles({ points }) {
+export default function Handles({ points, onMouseDown, onClick }) {
   if (!showCurveControls) {
     points = points.filter(point => point[2] !== controlTypes.control);
   }
@@ -14,6 +14,8 @@ export default function Handles({ points }) {
         <g
           key={i}
           className="handle"
+          onMouseDown={() => onMouseDown(i)}
+          onClick={() => onClick(i)}
         >
           <circle cx={x} cy={y} className={`${type}`} r="15" />
           <text x={x} y={y}>

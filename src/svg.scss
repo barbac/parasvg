@@ -4,22 +4,22 @@ body {
 }
 
 .container {
+  display: flex;
+
+  form {
+    text-align: right;
+  }
+
+  .controls {
+    padding: 20px;
+  }
+  .controls label {
     display: flex;
 
-    form {
-        text-align: right;
+    div:last-of-type {
+      padding-left: 20px;
     }
-
-    .controls {
-        padding: 20px;
-    }
-    .controls label {
-        display: flex;
-
-        div:last-of-type {
-            padding-left: 20px;
-        }
-    }
+  }
 }
 
 #svg {
@@ -35,31 +35,71 @@ body {
 }
 
 .handle {
-    // * {
-    //     pointer-events: none;
-    // }
+  // * {
+  //     pointer-events: none;
+  // }
 
-    text {
-        user-select: none;
-    }
+  text {
+    user-select: none;
+  }
 
-    circle.control {
-        fill: white;
-    }
+  circle.control {
+    fill: white;
+  }
 
-    circle.start {
-        fill: pink;
-    }
+  circle.start {
+    fill: pink;
+  }
 
-    circle.end {
-        fill: yellow;
-    }
+  circle.end {
+    fill: yellow;
+  }
 
-    circle:hover {
-        fill: red;
-    }
+  circle:hover {
+    fill: red;
+  }
 
-    circle:active {
-        fill: orange;
-    }
+  circle:active {
+    fill: orange;
+  }
 }
+
+//guides
+g.guide {
+  &:hover {
+    line {
+      stroke: Plum;
+      stroke-width: 1;
+    }
+  }
+
+  line {
+    stroke: green;
+  }
+
+  line.hover {
+    stroke-width: 20;
+    stroke: #fff1;
+  }
+}
+
+g.measurement {
+  line {
+    stroke: LightSteelBlue;
+  }
+
+  text {
+    fill: yellow;
+  }
+}
+
+/*
+.path {
+    stroke: #fff0;
+}
+
+.path:hover {
+    fill: red;
+    stroke: green;
+}
+*/

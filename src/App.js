@@ -1,14 +1,15 @@
 import React from "react";
 import "./App.css";
 import "./svg.scss";
-import * as paths from "./paths.js";
+import Editor from "./editor/Editor.jsx";
+// import * as paths from "./paths.js";
 
 function App() {
-  const Path = paths.TankTop;
+  // const Path = paths.TankTop;
 
   return (
     <div className="App">
-      <Path />
+      <Editor />
     </div>
   );
 }
