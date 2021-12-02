@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 // import { pathDataToPoints } from "../pathDataToPoints.js";
-import Handles from "../Handles.jsx";
+import Handles from "./Handles.jsx";
 import Guides from "./Guides.jsx";
 import GuideMeasurements from "./GuideMeasurements.jsx";
 import Path from "./Path.jsx";
