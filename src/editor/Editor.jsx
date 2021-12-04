@@ -27,6 +27,8 @@ const TOOL_KEYS = {
   KeyG: TOOL_TYPES.gcode
 };
 
+const DEFAULT_SCALE = 1;
+
 export default function Editor() {
   let svg;
   const [points, setPoints] = useState([]);
@@ -34,7 +36,8 @@ export default function Editor() {
   const [toolType, setToolType] = useState(TOOL_TYPES.none);
   const [handleDraggingIndex, setHandleDraggingIndex] = useState(null);
   const [guideDraggingIndex, setGuidDraggingIndex] = useState(null);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(DEFAULT_SCALE);
+  const [patternName, setPatternName] = useState("");
 
   function addHandle(e) {
     if (e.altKey) {
@@ -174,6 +177,52 @@ export default function Editor() {
     setGuideData(newGuides);
   }
 
+  function handleNewAction() {
+    console.log("new, clearing.");
+    setPoints([]);
+    setGuideData([]);
+    setToolType(TOOL_TYPES.none);
+    setHandleDraggingIndex(null);
+    setGuidDraggingIndex(null);
+    setScale(DEFAULT_SCALE);
+    setPatternName("");
+  }
+
+  function handleSaveAction() {
+    if (patternName === "") {
+      return;
+    }
+    const out = {
+      name: patternName,
+      handles: points,
+      guides: guideData,
+      scale
+    };
+    console.log("saving", out);
+    window.localStorage.setItem(patternName, JSON.stringify(out));
+    setPatternName(patternName);
+  }
+
+  function handleLoadAction(name) {
+    if (name === "") {
+      setPatternName("");
+      return;
+    } else if (name === patternName) {
+      return;
+    }
+
+    const patternData = JSON.parse(window.localStorage.getItem(name));
+    console.log(patternData);
+    console.log("loading,", name);
+    setPoints(patternData.handles);
+    setGuideData(patternData.guides);
+    setToolType(TOOL_TYPES.none);
+    setHandleDraggingIndex(null);
+    setGuidDraggingIndex(null);
+    setScale(patternData.scale);
+    setPatternName(name);
+  }
+
   const TOOL_FUNCTIONS = {
     none: () => {},
     handle: addHandle,
@@ -198,8 +247,13 @@ export default function Editor() {
         <Controls
           guides={guideData}
           scale={scale}
+          patternName={patternName}
+          onNameChange={setPatternName}
           onChange={handleControlsGuideChange}
           onScaleChange={setScale}
+          onNewAction={handleNewAction}
+          onSaveAction={handleSaveAction}
+          onLoadAction={handleLoadAction}
         />
       </div>
       <svg

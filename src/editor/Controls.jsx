@@ -1,6 +1,16 @@
 import React from "react";
 
-export default function Controls({ guides, scale, onChange, onScaleChange }) {
+export default function Controls({
+  guides,
+  scale,
+  patternName,
+  onChange,
+  onNameChange,
+  onScaleChange,
+  onNewAction,
+  onSaveAction,
+  onLoadAction
+}) {
   const guideInputs = guides.map((guide, i) => {
     const value = guide[0].toFixed(2);
     return (
@@ -17,7 +27,7 @@ export default function Controls({ guides, scale, onChange, onScaleChange }) {
     );
   });
 
-  const patternNames = ["tank top", "shirt 1", "shirt 2"];
+  const patternNames = ["", ...Object.keys(window.localStorage)];
   const options = patternNames.map(name => (
     <option key={name} value={name}>
       {name}
@@ -27,23 +37,31 @@ export default function Controls({ guides, scale, onChange, onScaleChange }) {
   return (
     <form>
       <div>
-        <div>Pattern sections</div>
         <div>
-          <select>{options}</select>
+          <input type="button" value="New pattern" onClick={onNewAction} />
         </div>
       </div>
 
       <div>
-        <div>Name</div>
+        <div>Patterns</div>
         <div>
-          <input type="text" />
+          <select onChange={e => onLoadAction(e.target.value)}>
+            {options}
+          </select>
         </div>
+      </div>
+
+      <div>
+        <div>New name</div>
         <div>
           <input
-            value="save"
-            type="button"
-            onClick={() => console.log("saving patthern")}
+            type="text"
+            value={patternName}
+            onChange={e => onNameChange(e.target.value)}
           />
+        </div>
+        <div>
+          <input value="save" type="button" onClick={onSaveAction} />
         </div>
       </div>
 
