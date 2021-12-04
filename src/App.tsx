@@ -1,4 +1,3 @@
-import React from "react";
 import "./App.css";
 import "./svg.scss";
 import Editor from "./editor/Editor.jsx";
