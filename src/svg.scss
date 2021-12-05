@@ -12,6 +12,10 @@ body {
 
   .controls {
     padding: 20px;
+
+    form > div {
+      margin-bottom: 15px;
+    }
   }
   .controls label {
     display: flex;
