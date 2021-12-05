@@ -1,4 +1,5 @@
 import React from "react";
+import BackgroundInput from "./BackgroundInput.tsx";
 
 export default function Controls({
   guides,
@@ -7,6 +8,7 @@ export default function Controls({
   onChange,
   onNameChange,
   onScaleChange,
+  onBackgroundSelected,
   onNewAction,
   onSaveAction,
   onLoadAction
@@ -64,6 +66,19 @@ export default function Controls({
           <input value="save" type="button" onClick={onSaveAction} />
         </div>
       </div>
+
+      <div>
+        <div>Background image url</div>
+        <div>
+          <input
+            type="text"
+            value={patternName}
+            onChange={(e) => onBackgroundSelected(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <BackgroundInput onChange={onBackgroundSelected} />
 
       <div>
         <div>Scale</div>

@@ -38,6 +38,7 @@ export default function Editor() {
   const [guideDraggingIndex, setGuidDraggingIndex] = useState(null);
   const [scale, setScale] = useState(DEFAULT_SCALE);
   const [patternName, setPatternName] = useState("");
+  const [image, setImage] = useState("/pattern.png");
 
   function addHandle(e) {
     if (e.altKey) {
@@ -233,7 +234,6 @@ export default function Editor() {
 
   const viewBoxWidth = 1000;
   const viewBoxHeight = 600;
-  const patternBackground = "/pattern.png";
   const viewBox = `0 0 ${viewBoxWidth} ${viewBoxHeight}`;
   return (
     <div
@@ -251,6 +251,7 @@ export default function Editor() {
           onNameChange={setPatternName}
           onChange={handleControlsGuideChange}
           onScaleChange={setScale}
+          onBackgroundSelected={setImage}
           onNewAction={handleNewAction}
           onSaveAction={handleSaveAction}
           onLoadAction={handleLoadAction}
@@ -269,12 +270,7 @@ export default function Editor() {
         }}
         onMouseMove={handleDrag}
       >
-        <image
-          transform="scale(1)"
-          href={patternBackground}
-          width="100%"
-          height="100%"
-        />
+        <image transform="scale(1)" href={image} width="100%" height="100%" />
         <GuideMeasurements
           guideData={guideData}
           width={viewBoxWidth}
