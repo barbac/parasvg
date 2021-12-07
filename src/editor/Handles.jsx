@@ -17,7 +17,7 @@ export default function Handles({ points, onMouseDown, onClick }) {
           onMouseDown={() => onMouseDown(i)}
           onClick={() => onClick(i)}
         >
-          <circle cx={x} cy={y} className={`${type}`} r="15" />
+          <circle cx={x} cy={y} className={`${i ? type : "start"}`} r="15" />
           <text x={x} y={y}>
             {i}
           </text>
