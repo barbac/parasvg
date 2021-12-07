@@ -5,7 +5,7 @@ const showCurveControls = true;
 
 export default function Handles({ points, onMouseDown, onClick }) {
   if (!showCurveControls) {
-    points = points.filter(point => point[2] !== controlTypes.control);
+    points = points.filter((point) => point[2] !== controlTypes.control);
   }
 
   return (

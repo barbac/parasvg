@@ -11,7 +11,7 @@ export default function Controls({
   onBackgroundSelected,
   onNewAction,
   onSaveAction,
-  onLoadAction
+  onLoadAction,
 }) {
   const guideInputs = guides.map((guide, i) => {
     const value = guide[0].toFixed(2);
@@ -22,7 +22,7 @@ export default function Controls({
           <input
             type="number"
             value={value}
-            onChange={e => onChange(e.target.valueAsNumber, i)}
+            onChange={(e) => onChange(e.target.valueAsNumber, i)}
           />
         </div>
       </div>
@@ -30,7 +30,7 @@ export default function Controls({
   });
 
   const patternNames = ["", ...Object.keys(window.localStorage)];
-  const options = patternNames.map(name => (
+  const options = patternNames.map((name) => (
     <option key={name} value={name}>
       {name}
     </option>
@@ -47,7 +47,7 @@ export default function Controls({
       <div>
         <div>Patterns</div>
         <div>
-          <select onChange={e => onLoadAction(e.target.value)}>
+          <select onChange={(e) => onLoadAction(e.target.value)}>
             {options}
           </select>
         </div>
@@ -59,7 +59,7 @@ export default function Controls({
           <input
             type="text"
             value={patternName}
-            onChange={e => onNameChange(e.target.value)}
+            onChange={(e) => onNameChange(e.target.value)}
           />
         </div>
         <div>
@@ -86,7 +86,7 @@ export default function Controls({
           <input
             type="number"
             value={scale}
-            onChange={e => onScaleChange(e.target.valueAsNumber)}
+            onChange={(e) => onScaleChange(e.target.valueAsNumber)}
           />
         </div>
       </div>

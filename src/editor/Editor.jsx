@@ -14,7 +14,7 @@ const TOOL_TYPES = {
   vLine: "vLine",
   clear: "clear",
   spline: "spline",
-  gcode: "gcode"
+  gcode: "gcode",
 };
 
 const TOOL_KEYS = {
@@ -24,7 +24,7 @@ const TOOL_KEYS = {
   KeyV: TOOL_TYPES.vLine,
   KeyC: TOOL_TYPES.clear,
   KeyS: TOOL_TYPES.spline,
-  KeyG: TOOL_TYPES.gcode
+  KeyG: TOOL_TYPES.gcode,
 };
 
 const DEFAULT_SCALE = 1;
@@ -50,7 +50,6 @@ export default function Editor() {
     pt.y = e.clientY;
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
     setPoints([...points, [cursorpt.x, cursorpt.y, "end", "M"]]);
-    // console.log(e);
   }
 
   function addHGuide(e) {
@@ -112,7 +111,6 @@ export default function Editor() {
     pt.x = e.clientX;
     pt.y = e.clientY;
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
-    // console.log("drag", cursorpt.x, cursorpt.y);
 
     if (handleDraggingIndex !== null) {
       let newPoints = [...points];
@@ -123,7 +121,7 @@ export default function Editor() {
       let distance = 1000; //
       let snapHGuide = null;
 
-      guideData.forEach(guide => {
+      guideData.forEach((guide) => {
         if (guide[1] === "hLine") {
           const newDistance = Math.abs(guide[0] - cursorpt.y);
           if (newDistance < distance && newDistance < SNAP_DISTANCE) {
@@ -139,10 +137,9 @@ export default function Editor() {
       //vertical
       distance = 1000;
       let snapVGuide = null;
-      guideData.forEach(guide => {
+      guideData.forEach((guide) => {
         if (guide[1] === "vLine") {
           const newDistance = Math.abs(guide[0] - cursorpt.x);
-          console.log(guide[0], cursorpt.x, newDistance);
           if (newDistance < distance && newDistance < SNAP_DISTANCE) {
             snapVGuide = guide;
             distance = newDistance;
@@ -197,7 +194,7 @@ export default function Editor() {
       name: patternName,
       handles: points,
       guides: guideData,
-      scale
+      scale,
     };
     console.log("saving", out);
     window.localStorage.setItem(patternName, JSON.stringify(out));
@@ -229,7 +226,7 @@ export default function Editor() {
     handle: addHandle,
     hLine: addHGuide,
     vLine: addVGuide,
-    gcode: addVGuide
+    gcode: addVGuide,
   };
 
   const viewBoxWidth = 1000;
@@ -259,7 +256,9 @@ export default function Editor() {
       </div>
       <svg
         id="svg"
-        ref={ref => (svg = ref)}
+        ref={(ref) => {
+          svg = ref;
+        }}
         viewBox={viewBox}
         className="background-img"
         style={{ border: "thin solid red", height: "90vh" }}
@@ -286,7 +285,6 @@ export default function Editor() {
         <Path points={points} />
         <Handles
           points={points}
-          onDrag={setPoints}
           onMouseDown={setHandleDraggingIndex}
           onClick={handleHandleClick}
         />
