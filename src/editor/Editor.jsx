@@ -80,6 +80,11 @@ export default function Editor() {
       console.log("aasking expor");
       gcode(points);
       setToolType(TOOL_TYPES.none);
+    } else if (key === "KeyI") {
+      let reversedPoints = [...points];
+      reversedPoints.reverse();
+      setPoints(reversedPoints);
+      setToolType(TOOL_KEYS.none);
     } else {
       setToolType(TOOL_KEYS[key]);
     }
