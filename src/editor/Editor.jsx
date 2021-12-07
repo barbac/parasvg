@@ -85,6 +85,19 @@ export default function Editor() {
       reversedPoints.reverse();
       setPoints(reversedPoints);
       setToolType(TOOL_KEYS.none);
+    } else if (key === "KeyR") {
+      if (points.length) {
+        const yAxis = points[0][0];
+        let reflectedPoints = points.map((point) => {
+          const newPoint = [...point];
+          const a = point[0] - yAxis;
+          newPoint[0] = yAxis - a;
+          return newPoint;
+        });
+
+        setPoints(reflectedPoints);
+      }
+      setToolType(TOOL_KEYS.none);
     } else {
       setToolType(TOOL_KEYS[key]);
     }
