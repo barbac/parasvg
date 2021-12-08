@@ -4,10 +4,24 @@ const zSafe = 10;
 const zCut = -5;
 const feed = 2000;
 
-export default function jcode(points) {
+export default function gcode(points, scale) {
   if (!points.length) {
     return;
   }
+
+  //TODO: set units instad of assuming mm.
+  const MM_TO_CM_FACTOR = 10;
+  scale *= MM_TO_CM_FACTOR;
+
+  //translate to 0 and flip Y to match common cnc coordinate systems.
+  const first = points[0]; //TODO: find the closest point to bot/left
+  points = points.map((point) => {
+    let newPoint = [...point];
+    newPoint[0] = (point[0] - first[0]) * scale;
+    newPoint[1] = (point[1] - first[1]) * -scale;
+    return newPoint;
+  });
+
   const oldPoints = points;
   points = [...points];
   console.log("generating gcode");
@@ -17,10 +31,8 @@ export default function jcode(points) {
   let g1s = [];
   // let start = null;
   let control = null;
-  console.log(firstPoint, 0);
   points.forEach((point, i) => {
-    i+=1; //ZOMG!!!! messedd up is
-    console.log(point, i);
+    i += 1; //ZOMG!!!! messedd up is
     if (point[2] === "control") {
       // start = points[i - 1];
       control = point;
@@ -34,18 +46,17 @@ export default function jcode(points) {
         // start[1],
         // control[0],
         // control[1],
-          oldPoints[i - 2][0],
-          oldPoints[i - 2][1],
-          oldPoints[i - 1][0],
-          oldPoints[i - 1][1],
+        oldPoints[i - 2][0],
+        oldPoints[i - 2][1],
+        oldPoints[i - 1][0],
+        oldPoints[i - 1][1],
         point[0],
         point[1]
       );
       //TODO add steps arg.
       const steps = 30;
-      bezier.getLUT(steps).forEach(step => {
+      bezier.getLUT(steps).forEach((step) => {
         g1s.push(`G1 X${step.x} Y${step.y} (${i} step)`);
-        // console.log(step);
       });
       control = null;
       // start = null;
@@ -61,7 +72,5 @@ ${g1s.join("\n")}
 G0 Z${zSafe}
   `;
 
-  console.log(gcodeText);
-  // const promise = navigator.clipboard.writeText(gcodeText);
-  // console.log(promise);
+  return gcodeText;
 }
