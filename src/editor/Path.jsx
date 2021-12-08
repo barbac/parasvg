@@ -1,9 +1,11 @@
-import React from "react";
+import mirrorPoints from "./points";
 
-export default function Path({ points }) {
+export default function Path({ points, mirror }) {
   if (!points.length) {
     return null;
   }
+
+  points = mirror ? mirrorPoints(points) : points;
 
   let spline = false;
   const commands = points.map((point, i) => {

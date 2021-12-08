@@ -6,6 +6,7 @@ import GuideMeasurements from "./GuideMeasurements.jsx";
 import Path from "./Path.jsx";
 import gcode from "../utils/gcode.js";
 import Controls from "./Controls.jsx";
+import mirrorPoints from "./points";
 
 const TOOL_TYPES = {
   none: "none",
@@ -39,6 +40,7 @@ export default function Editor() {
   const [scale, setScale] = useState(DEFAULT_SCALE);
   const [patternName, setPatternName] = useState("");
   const [image, setImage] = useState("/pattern.png");
+  const [mirror, setMirror] = useState(false);
 
   function addHandle(e) {
     if (e.altKey) {
@@ -97,6 +99,9 @@ export default function Editor() {
 
         setPoints(reflectedPoints);
       }
+      setToolType(TOOL_KEYS.none);
+    } else if (key === "KeyM") {
+      setMirror(!mirror);
       setToolType(TOOL_KEYS.none);
     } else {
       setToolType(TOOL_KEYS[key]);
@@ -300,7 +305,7 @@ export default function Editor() {
           height={viewBoxHeight}
           onMouseDown={setGuidDraggingIndex}
         />
-        <Path points={points} />
+        <Path points={points} mirror={mirror} />
         <Handles
           points={points}
           onMouseDown={setHandleDraggingIndex}
