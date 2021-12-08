@@ -41,6 +41,7 @@ export default function Editor() {
   const [patternName, setPatternName] = useState("");
   const [image, setImage] = useState("/pattern.png");
   const [mirror, setMirror] = useState(false);
+  const [gcodeString, setGcodeString] = useState("");
 
   function addHandle(e) {
     if (e.altKey) {
@@ -70,6 +71,10 @@ export default function Editor() {
     setGuideData([...guideData, [cursorpt.x, "vLine"]]);
   }
 
+  function handleGcodeAction() {
+    setGcodeString(gcode(mirror ? mirrorPoints(points) : points, scale));
+  }
+
   function handleKeyPress(e) {
     const key = e.code;
     if (key === "KeyC") {
@@ -79,8 +84,7 @@ export default function Editor() {
       }
       setToolType(TOOL_TYPES.none);
     } else if (key === "KeyG") {
-      console.log("aasking expor");
-      gcode(points);
+      handleGcodeAction();
       setToolType(TOOL_TYPES.none);
     } else if (key === "KeyI") {
       let reversedPoints = [...points];
@@ -275,6 +279,8 @@ export default function Editor() {
           onNewAction={handleNewAction}
           onSaveAction={handleSaveAction}
           onLoadAction={handleLoadAction}
+          gcode={gcodeString}
+          onGcodeAction={handleGcodeAction}
         />
       </div>
       <svg

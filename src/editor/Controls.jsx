@@ -1,4 +1,3 @@
-import React from "react";
 import BackgroundInput from "./BackgroundInput.tsx";
 
 export default function Controls({
@@ -12,6 +11,8 @@ export default function Controls({
   onNewAction,
   onSaveAction,
   onLoadAction,
+  gcode,
+  onGcodeAction,
 }) {
   const guideInputs = guides.map((guide, i) => {
     const value = guide[0].toFixed(2);
@@ -93,6 +94,18 @@ export default function Controls({
 
       <div>Guides</div>
       {guideInputs}
+
+      <div>
+        <div>gcode</div>
+        <div>
+          <input type="button" value="Generate" onClick={onGcodeAction} />
+        </div>
+        <textarea
+          value={gcode}
+          readonly={true}
+          onClick={(e) => e.target.select()}
+        />
+      </div>
     </form>
   );
 }
