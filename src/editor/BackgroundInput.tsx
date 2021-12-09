@@ -1,11 +1,14 @@
+import { useTranslation } from "react-i18next";
+
 interface BackgroundInputProps {
   onChange: (image: string) => void;
 }
 
 export default function BackgroundInput({ onChange }: BackgroundInputProps) {
+  const { t } = useTranslation();
   return (
     <div>
-      <div>Background image</div>
+      <div>{t("Background image")}</div>
       <div>
         <input
           type="file"

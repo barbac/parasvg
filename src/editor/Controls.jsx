@@ -1,3 +1,5 @@
+import i18n from "i18next";
+import { useTranslation } from "react-i18next";
 import BackgroundInput from "./BackgroundInput.tsx";
 
 export default function Controls({
@@ -14,6 +16,7 @@ export default function Controls({
   gcode,
   onGcodeAction,
 }) {
+  const { t } = useTranslation();
   const guideInputs = guides.map((guide, i) => {
     const value = guide[0].toFixed(2);
     return (
@@ -40,13 +43,26 @@ export default function Controls({
   return (
     <form>
       <div>
+        <input
+          type="button"
+          value="English"
+          onClick={() => i18n.changeLanguage("en")}
+        />
+        <input
+          type="button"
+          value="Español"
+          onClick={() => i18n.changeLanguage("es")}
+        />
+      </div>
+
+      <div>
         <div>
-          <input type="button" value="New pattern" onClick={onNewAction} />
+          <input type="button" value={t("New pattern")} onClick={onNewAction} />
         </div>
       </div>
 
       <div>
-        <div>Patterns</div>
+        <div>{t("Patterns")}</div>
         <div>
           <select onChange={(e) => onLoadAction(e.target.value)}>
             {options}
@@ -55,7 +71,7 @@ export default function Controls({
       </div>
 
       <div>
-        <div>New name</div>
+        <div>{t("New name")}</div>
         <div>
           <input
             type="text"
@@ -64,12 +80,12 @@ export default function Controls({
           />
         </div>
         <div>
-          <input value="save" type="button" onClick={onSaveAction} />
+          <input value={t("Save")} type="button" onClick={onSaveAction} />
         </div>
       </div>
 
       <div>
-        <div>Background image url</div>
+        <div>{t("Background image url")}</div>
         <div>
           <input
             type="text"
@@ -82,7 +98,7 @@ export default function Controls({
       <BackgroundInput onChange={onBackgroundSelected} />
 
       <div>
-        <div>Scale</div>
+        <div>{t("Scale")}</div>
         <div>
           <input
             type="number"
@@ -92,17 +108,17 @@ export default function Controls({
         </div>
       </div>
 
-      <div>Guides</div>
+      <div>{t("Guides")}</div>
       {guideInputs}
 
       <div>
-        <div>gcode</div>
+        <div>{t("gcode")}</div>
         <div>
-          <input type="button" value="Generate" onClick={onGcodeAction} />
+          <input type="button" value={t("Generate")} onClick={onGcodeAction} />
         </div>
         <textarea
           value={gcode}
-          readonly={true}
+          readOnly={true}
           onClick={(e) => e.target.select()}
         />
       </div>
