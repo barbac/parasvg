@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 interface BackgroundInputProps {
-  onChange: (image: string) => void;
+  onChange: (filename: string, image: string) => void;
 }
 
 export default function BackgroundInput({ onChange }: BackgroundInputProps) {
@@ -15,7 +15,9 @@ export default function BackgroundInput({ onChange }: BackgroundInputProps) {
           accept="image/*"
           onChange={(e) => {
             const reader = new FileReader();
-            reader.onload = (e) => onChange(e.target!.result as string);
+            const file = e.target.files![0];
+            reader.onload = (e) =>
+              onChange(file.name, e.target!.result as string);
             reader.readAsDataURL(e.target.files![0]);
           }}
         />

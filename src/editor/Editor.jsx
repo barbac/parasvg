@@ -273,6 +273,7 @@ export default function Editor() {
           scale={scale}
           patternName={patternName}
           onNameChange={setPatternName}
+          image={image}
           onChange={handleControlsGuideChange}
           onScaleChange={setScale}
           onBackgroundSelected={setImage}
