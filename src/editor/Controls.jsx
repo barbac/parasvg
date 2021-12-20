@@ -1,16 +1,14 @@
 import { useState } from "react";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
+import { useAppSelector, useAppDispatch } from "../app/hooks";
+import { selectPattern, setName, setScale } from "./patternSlice";
 import BackgroundInput from "./BackgroundInput.tsx";
 
 export default function Controls({
   image,
   guides,
-  scale,
-  patternName,
   onChange,
-  onNameChange,
-  onScaleChange,
   onBackgroundSelected,
   onNewAction,
   onSaveAction,
@@ -36,6 +34,8 @@ export default function Controls({
   });
 
   const [imageFileName, setImageFileName] = useState("");
+  const dispatch = useAppDispatch();
+  const pattern = useAppSelector(selectPattern);
 
   const patternNames = ["", ...Object.keys(window.localStorage)];
   const options = patternNames.map((name) => (
@@ -79,8 +79,8 @@ export default function Controls({
         <div>
           <input
             type="text"
-            value={patternName}
-            onChange={(e) => onNameChange(e.target.value)}
+            value={pattern.name}
+            onChange={(e) => dispatch(setName(e.target.value))}
           />
         </div>
         <div>
@@ -115,8 +115,8 @@ export default function Controls({
         <div>
           <input
             type="number"
-            value={scale}
-            onChange={(e) => onScaleChange(e.target.valueAsNumber)}
+            value={pattern.scale}
+            onChange={(e) => dispatch(setScale(e.target.valueAsNumber))}
           />
         </div>
       </div>

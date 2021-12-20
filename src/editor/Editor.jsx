@@ -7,6 +7,8 @@ import Path from "./Path.jsx";
 import gcode from "../utils/gcode.js";
 import Controls from "./Controls.jsx";
 import mirrorPoints from "./points";
+import { useAppSelector, useAppDispatch } from "../app/hooks";
+import { selectPattern, setName, setScale } from "./patternSlice";
 
 const TOOL_TYPES = {
   none: "none",
@@ -32,13 +34,13 @@ const DEFAULT_SCALE = 1;
 
 export default function Editor() {
   let svg;
+  const dispatch = useAppDispatch();
+  const pattern = useAppSelector(selectPattern);
   const [points, setPoints] = useState([]);
   const [guideData, setGuideData] = useState([]);
   const [toolType, setToolType] = useState(TOOL_TYPES.none);
   const [handleDraggingIndex, setHandleDraggingIndex] = useState(null);
   const [guideDraggingIndex, setGuidDraggingIndex] = useState(null);
-  const [scale, setScale] = useState(DEFAULT_SCALE);
-  const [patternName, setPatternName] = useState("");
   const [image, setImage] = useState("/pattern.png");
   const [mirror, setMirror] = useState(false);
   const [gcodeString, setGcodeString] = useState("");
@@ -72,7 +74,9 @@ export default function Editor() {
   }
 
   function handleGcodeAction() {
-    setGcodeString(gcode(mirror ? mirrorPoints(points) : points, scale));
+    setGcodeString(
+      gcode(mirror ? mirrorPoints(points) : points, pattern.scale)
+    );
   }
 
   function handleKeyPress(e) {
@@ -209,30 +213,29 @@ export default function Editor() {
     setToolType(TOOL_TYPES.none);
     setHandleDraggingIndex(null);
     setGuidDraggingIndex(null);
-    setScale(DEFAULT_SCALE);
-    setPatternName("");
+    dispatch(setScale(DEFAULT_SCALE));
+    dispatch(setName(""));
   }
 
   function handleSaveAction() {
-    if (patternName === "") {
+    if (pattern.name === "") {
       return;
     }
     const out = {
-      name: patternName,
+      name: pattern.name,
       handles: points,
       guides: guideData,
-      scale,
+      scale: pattern.scale,
     };
     console.log("saving", out);
-    window.localStorage.setItem(patternName, JSON.stringify(out));
-    setPatternName(patternName);
+    window.localStorage.setItem(pattern.name, JSON.stringify(out));
   }
 
   function handleLoadAction(name) {
     if (name === "") {
-      setPatternName("");
+      dispatch(setName(""));
       return;
-    } else if (name === patternName) {
+    } else if (name === pattern.name) {
       return;
     }
 
@@ -244,8 +247,8 @@ export default function Editor() {
     setToolType(TOOL_TYPES.none);
     setHandleDraggingIndex(null);
     setGuidDraggingIndex(null);
-    setScale(patternData.scale);
-    setPatternName(name);
+    dispatch(setScale(patternData.scale));
+    dispatch(setName(name));
   }
 
   const TOOL_FUNCTIONS = {
@@ -270,12 +273,8 @@ export default function Editor() {
       <div className="controls">
         <Controls
           guides={guideData}
-          scale={scale}
-          patternName={patternName}
-          onNameChange={setPatternName}
           image={image}
           onChange={handleControlsGuideChange}
-          onScaleChange={setScale}
           onBackgroundSelected={setImage}
           onNewAction={handleNewAction}
           onSaveAction={handleSaveAction}
@@ -304,7 +303,7 @@ export default function Editor() {
           guideData={guideData}
           width={viewBoxWidth}
           height={viewBoxHeight}
-          scale={scale}
+          scale={pattern.scale}
         />
         <Guides
           guideData={guideData}
