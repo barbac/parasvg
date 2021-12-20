@@ -2,7 +2,7 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
-const resources = {
+export const resources = {
   en: {
     translation: {
       "New pattern": "New pattern",
@@ -45,5 +45,3 @@ i18n
       order: ["navigator", "htmlTag"],
     },
   });
-
-export default i18n;

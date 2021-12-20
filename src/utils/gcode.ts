@@ -1,10 +1,11 @@
 import { Bezier } from "bezier-js";
+import { Handle } from "../editor/points";
 
 const zSafe = 10;
 const zCut = -5;
 const feed = 2000;
 
-export default function gcode(points, scale) {
+export default function gcode(points: Handle[], scale: number) {
   if (!points.length) {
     return;
   }
@@ -15,8 +16,8 @@ export default function gcode(points, scale) {
 
   //translate to 0 and flip Y to match common cnc coordinate systems.
   const first = points[0]; //TODO: find the closest point to bot/left
-  points = points.map((point) => {
-    let newPoint = [...point];
+  points = points.map((point: Handle) => {
+    let newPoint: Handle = [...point];
     newPoint[0] = (point[0] - first[0]) * scale;
     newPoint[1] = (point[1] - first[1]) * -scale;
     return newPoint;
@@ -26,17 +27,20 @@ export default function gcode(points, scale) {
   points = [...points];
   console.log("generating gcode");
 
-  const firstPoint = points.shift(0);
+  const firstPoint = points.shift();
+  if (!firstPoint) {
+    return; // keeps ts happy
+  }
 
-  let g1s = [];
+  let g1Commands: string[] = [];
   // let start = null;
-  let control = null;
+  let control: Handle | null = null;
   points.forEach((point, i) => {
     i += 1; //ZOMG!!!! messedd up is
     if (point[2] === "control") {
       // start = points[i - 1];
       control = point;
-      g1s.push(`(control ${i})`);
+      g1Commands.push(`(control ${i})`);
       return;
     }
 
@@ -56,19 +60,19 @@ export default function gcode(points, scale) {
       //TODO add steps arg.
       const steps = 30;
       bezier.getLUT(steps).forEach((step) => {
-        g1s.push(`G1 X${step.x} Y${step.y} (${i} step)`);
+        g1Commands.push(`G1 X${step.x} Y${step.y} (${i} step)`);
       });
       control = null;
       // start = null;
     } else {
-      g1s.push(`G1 X${point[0]} Y${point[1]} (${i})`);
+      g1Commands.push(`G1 X${point[0]} Y${point[1]} (${i})`);
     }
   });
 
   const gcodeText = `G0 Z${zSafe}
 G0 X${firstPoint[0]} Y${firstPoint[1]} (0)
 G1 Z${zCut} F${feed}
-${g1s.join("\n")}
+${g1Commands.join("\n")}
 G0 Z${zSafe}
   `;
 

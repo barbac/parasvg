@@ -1,15 +1,18 @@
-import React from "react";
-import { controlTypes } from "./pathDataToPoints.js";
+import { Handle } from "./points";
 
-const showCurveControls = true;
+interface HandlesProps {
+  points: Handle[];
+  onMouseDown: Function;
+  onClick: Function;
+}
 
-export default function Handles({ points, onMouseDown, onClick }) {
-  if (!showCurveControls) {
-    points = points.filter((point) => point[2] !== controlTypes.control);
-  }
-
+export default function Handles({
+  points,
+  onMouseDown,
+  onClick,
+}: HandlesProps) {
   return (
-    <React.Fragment>
+    <>
       {points.map(([x, y, type], i) => (
         <g
           key={i}
@@ -23,6 +26,6 @@ export default function Handles({ points, onMouseDown, onClick }) {
           </text>
         </g>
       ))}
-    </React.Fragment>
+    </>
   );
 }

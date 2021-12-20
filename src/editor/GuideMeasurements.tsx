@@ -1,8 +1,20 @@
-import React from "react";
+import { Guide } from "./Guides";
 
-export default function GuideMeasurements({ guideData, width, height, scale }) {
-  const hGuides = [];
-  const vGuides = [];
+interface GuideMeasurementsProps {
+  guideData: Guide[];
+  width: number;
+  height: number;
+  scale: number;
+}
+
+export default function GuideMeasurements({
+  guideData,
+  width,
+  height,
+  scale,
+}: GuideMeasurementsProps) {
+  const hGuides: number[] = [];
+  const vGuides: number[] = [];
   guideData.forEach(([pos, guideType]) => {
     if (guideType === "hLine") {
       hGuides.push(pos);
@@ -11,18 +23,18 @@ export default function GuideMeasurements({ guideData, width, height, scale }) {
     }
   });
 
-  const firstHPoint = hGuides.shift();
-  const firstVPoint = vGuides.shift();
+  const firstHPoint = hGuides.shift() || 0; //keep ts happy with 0
+  const firstVPoint = vGuides.shift() || 0; //keep ts happy with 0
 
   return (
-    <React.Fragment>
+    <>
       {hGuides.map((pos, i) => {
         const distance = Math.abs(pos - firstHPoint);
         const points = {
           x1: width / 2,
           x2: width / 2,
           y1: pos,
-          y2: firstHPoint
+          y2: firstHPoint,
         };
         //TODO the measurment should go the other way if the firstPoint is shorter (firstHPoint+distance/2)
         return (
@@ -41,11 +53,11 @@ export default function GuideMeasurements({ guideData, width, height, scale }) {
           x1: firstVPoint,
           x2: pos,
           y1: height / 2,
-          y2: height / 2
+          y2: height / 2,
         };
         //TODO the measurment should go the other way if the firstPoint is shorter (firstHPoint+distance/2)
         return (
-          <g className="measurement" key={i + "h"}>
+          <g className="measurement" key={i + "v"}>
             <line {...points} />
             <text y={height / 2} x={firstVPoint + distance / 2}>
               {(distance * scale).toFixed(2)}
@@ -53,6 +65,6 @@ export default function GuideMeasurements({ guideData, width, height, scale }) {
           </g>
         );
       })}
-    </React.Fragment>
+    </>
   );
 }

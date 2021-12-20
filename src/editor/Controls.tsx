@@ -3,7 +3,20 @@ import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectPattern, setName, setScale } from "./patternSlice";
-import BackgroundInput from "./BackgroundInput.tsx";
+import BackgroundInput from "./BackgroundInput";
+import { Handle } from "./points";
+
+interface ControlsProps {
+  image: string;
+  guides: Handle[];
+  onChange: Function;
+  onBackgroundSelected: Function;
+  onNewAction: (event: React.MouseEvent<HTMLElement>) => undefined;
+  onSaveAction: (event: React.MouseEvent<HTMLElement>) => undefined;
+  onLoadAction: Function;
+  gcode: string;
+  onGcodeAction: (event: React.MouseEvent<HTMLElement>) => undefined;
+}
 
 export default function Controls({
   image,
@@ -15,7 +28,7 @@ export default function Controls({
   onLoadAction,
   gcode,
   onGcodeAction,
-}) {
+}: ControlsProps) {
   const { t } = useTranslation();
   const guideInputs = guides.map((guide, i) => {
     const value = guide[0].toFixed(2);
@@ -61,7 +74,12 @@ export default function Controls({
 
       <div>
         <div>
-          <input type="button" value={t("New pattern")} onClick={onNewAction} />
+          {t("New pattern")}
+          <input
+            type="button"
+            value={t("New pattern") as string}
+            onClick={onNewAction}
+          />
         </div>
       </div>
 
@@ -84,7 +102,11 @@ export default function Controls({
           />
         </div>
         <div>
-          <input value={t("Save")} type="button" onClick={onSaveAction} />
+          <input
+            value={t("Save") as string}
+            type="button"
+            onClick={onSaveAction}
+          />
         </div>
       </div>
 
@@ -127,12 +149,16 @@ export default function Controls({
       <div>
         <div>{t("gcode")}</div>
         <div>
-          <input type="button" value={t("Generate")} onClick={onGcodeAction} />
+          <input
+            type="button"
+            value={t("Generate") as string}
+            onClick={onGcodeAction}
+          />
         </div>
         <textarea
           value={gcode}
           readOnly={true}
-          onClick={(e) => e.target.select()}
+          onClick={(e) => (e.target as HTMLTextAreaElement).select()}
         />
       </div>
     </form>

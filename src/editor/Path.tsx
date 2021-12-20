@@ -1,6 +1,11 @@
-import mirrorPoints from "./points";
+import { Handle, mirrorPoints } from "./points";
 
-export default function Path({ points, mirror }) {
+interface PathProps {
+  points: Handle[];
+  mirror: boolean;
+}
+
+export default function Path({ points, mirror }: PathProps) {
   if (!points.length) {
     return null;
   }

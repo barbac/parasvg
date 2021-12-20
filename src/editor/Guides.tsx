@@ -1,8 +1,20 @@
-import React from "react";
+export type Guide = [number, "hLine" | "vLine"];
 
-export default function Guides({ guideData, width, height, onMouseDown }) {
+interface GuidesProps {
+  guideData: Guide[];
+  width: number;
+  height: number;
+  onMouseDown: Function;
+}
+
+export default function Guides({
+  guideData,
+  width,
+  height,
+  onMouseDown,
+}: GuidesProps) {
   return (
-    <React.Fragment>
+    <>
       {guideData.map(([pos, guideType], i) => {
         let points = {};
         if (guideType === "hLine") {
@@ -10,14 +22,14 @@ export default function Guides({ guideData, width, height, onMouseDown }) {
             x1: 0,
             x2: width,
             y1: pos,
-            y2: pos
+            y2: pos,
           };
         } else {
           points = {
             x1: pos,
             x2: pos,
             y1: 0,
-            y2: height
+            y2: height,
           };
         }
 
@@ -28,6 +40,6 @@ export default function Guides({ guideData, width, height, onMouseDown }) {
           </g>
         );
       })}
-    </React.Fragment>
+    </>
   );
 }
