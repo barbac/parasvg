@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import Handles from "./Handles";
+import { Guide } from "./Guides";
 import Guides from "./Guides";
 import GuideMeasurements from "./GuideMeasurements";
-import Path from "./Path.tsx";
-import gcode from "../utils/gcode.ts";
-import Controls from "./Controls.tsx";
+import Path from "./Path";
+import gcode from "../utils/gcode";
+import Controls from "./Controls";
 import mirrorPoints from "./points";
+import { Handle } from "./points";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectPattern, setName, setScale } from "./patternSlice";
 
@@ -19,7 +21,7 @@ const TOOL_TYPES = {
   gcode: "gcode",
 };
 
-const TOOL_KEYS = {
+const TOOL_KEYS: { [index: string]: any } = {
   KeyN: TOOL_TYPES.none,
   KeyP: TOOL_TYPES.handle,
   KeyH: TOOL_TYPES.hLine,
@@ -32,11 +34,11 @@ const TOOL_KEYS = {
 const DEFAULT_SCALE = 1;
 
 export default function Editor() {
-  let svg;
+  let svg: any;
   const dispatch = useAppDispatch();
   const pattern = useAppSelector(selectPattern);
-  const [points, setPoints] = useState([]);
-  const [guideData, setGuideData] = useState([]);
+  const [points, setPoints] = useState([] as Handle[]);
+  const [guideData, setGuideData] = useState([] as Guide[]);
   const [toolType, setToolType] = useState(TOOL_TYPES.none);
   const [handleDraggingIndex, setHandleDraggingIndex] = useState(null);
   const [guideDraggingIndex, setGuidDraggingIndex] = useState(null);
@@ -44,7 +46,7 @@ export default function Editor() {
   const [mirror, setMirror] = useState(false);
   const [gcodeString, setGcodeString] = useState("");
 
-  function addHandle(e) {
+  function addHandle(e: React.MouseEvent<HTMLElement>) {
     if (e.altKey) {
       setPoints([]);
       return;
@@ -53,10 +55,10 @@ export default function Editor() {
     pt.x = e.clientX;
     pt.y = e.clientY;
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
-    setPoints([...points, [cursorpt.x, cursorpt.y, "end", "M"]]);
+    setPoints([...points, [cursorpt.x, cursorpt.y, "end"]]);
   }
 
-  function addHGuide(e) {
+  function addHGuide(e: React.MouseEvent<HTMLElement>) {
     let pt = svg.createSVGPoint();
     pt.x = e.clientX;
     pt.y = e.clientY;
@@ -64,7 +66,7 @@ export default function Editor() {
     setGuideData([...guideData, [cursorpt.y, "hLine"]]);
   }
 
-  function addVGuide(e) {
+  function addVGuide(e: React.MouseEvent<HTMLElement>) {
     let pt = svg.createSVGPoint();
     pt.x = e.clientX;
     pt.y = e.clientY;
@@ -78,7 +80,7 @@ export default function Editor() {
     );
   }
 
-  function handleKeyPress(e) {
+  function handleKeyPress(e: React.KeyboardEvent<HTMLElement>) {
     const key = e.code;
     if (key === "KeyC") {
       if (e.shiftKey) {
@@ -93,12 +95,12 @@ export default function Editor() {
       let reversedPoints = [...points];
       reversedPoints.reverse();
       setPoints(reversedPoints);
-      setToolType(TOOL_KEYS.none);
+      setToolType(TOOL_TYPES.none);
     } else if (key === "KeyR") {
       if (points.length) {
         const yAxis = points[0][0];
         let reflectedPoints = points.map((point) => {
-          const newPoint = [...point];
+          const newPoint: Handle = [...point];
           const a = point[0] - yAxis;
           newPoint[0] = yAxis - a;
           return newPoint;
@@ -106,21 +108,21 @@ export default function Editor() {
 
         setPoints(reflectedPoints);
       }
-      setToolType(TOOL_KEYS.none);
+      setToolType(TOOL_TYPES.none);
     } else if (key === "KeyM") {
       setMirror(!mirror);
-      setToolType(TOOL_KEYS.none);
+      setToolType(TOOL_TYPES.none);
     } else {
       setToolType(TOOL_KEYS[key]);
     }
   }
 
-  function handleHandleClick(i) {
+  function handleHandleClick(i: number) {
     if (toolType !== TOOL_TYPES.spline) {
       return;
     }
     let point = points[i];
-    let newPoint = [...point];
+    let newPoint: Handle = [...point];
 
     newPoint[2] = "control";
     // point[3] = "S";
@@ -132,7 +134,7 @@ export default function Editor() {
     setPoints(newPoints);
   }
 
-  function handleDrag(e) {
+  function handleDrag(e: React.MouseEvent<SVGElement>) {
     if (handleDraggingIndex === null && guideDraggingIndex === null) {
       return;
     }
@@ -199,7 +201,7 @@ export default function Editor() {
     }
   }
 
-  function handleControlsGuideChange(value, i) {
+  function handleControlsGuideChange(value: number, i: number) {
     let newGuides = [...guideData];
     newGuides[i][0] = value;
     setGuideData(newGuides);
@@ -230,7 +232,7 @@ export default function Editor() {
     window.localStorage.setItem(pattern.name, JSON.stringify(out));
   }
 
-  function handleLoadAction(name) {
+  function handleLoadAction(name: string) {
     if (name === "") {
       dispatch(setName(""));
       return;
@@ -238,7 +240,12 @@ export default function Editor() {
       return;
     }
 
-    const patternData = JSON.parse(window.localStorage.getItem(name));
+    const patternString = window.localStorage.getItem(name);
+    if (!patternString) {
+      console.log(`pattern: ${name} not found`, name);
+      return;
+    }
+    const patternData = JSON.parse(patternString);
     console.log(patternData);
     console.log("loading,", name);
     setPoints(patternData.handles);
@@ -250,7 +257,7 @@ export default function Editor() {
     dispatch(setName(name));
   }
 
-  const TOOL_FUNCTIONS = {
+  const TOOL_FUNCTIONS: { [index: string]: any } = {
     none: () => {},
     handle: addHandle,
     hLine: addHGuide,
@@ -265,7 +272,7 @@ export default function Editor() {
     <div
       className="container"
       style={{ border: "thin solid blue" }}
-      tabIndex="0"
+      tabIndex={0}
       onKeyPress={handleKeyPress}
       // contentEditable="true"
     >

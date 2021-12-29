@@ -7,7 +7,7 @@ const feed = 2000;
 
 export default function gcode(points: Handle[], scale: number) {
   if (!points.length) {
-    return;
+    return "";
   }
 
   //TODO: set units instad of assuming mm.
@@ -29,7 +29,7 @@ export default function gcode(points: Handle[], scale: number) {
 
   const firstPoint = points.shift();
   if (!firstPoint) {
-    return; // keeps ts happy
+    return ""; // keeps ts happy
   }
 
   let g1Commands: string[] = [];

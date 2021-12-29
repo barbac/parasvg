@@ -1,6 +1,6 @@
 export type Guide = [number, "hLine" | "vLine"];
 
-interface GuidesProps {
+export interface GuidesProps {
   guideData: Guide[];
   width: number;
   height: number;

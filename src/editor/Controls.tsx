@@ -4,18 +4,18 @@ import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectPattern, setName, setScale } from "./patternSlice";
 import BackgroundInput from "./BackgroundInput";
-import { Handle } from "./points";
+import { Guide } from "./Guides";
 
 interface ControlsProps {
   image: string;
-  guides: Handle[];
+  guides: Guide[];
   onChange: Function;
   onBackgroundSelected: Function;
-  onNewAction: (event: React.MouseEvent<HTMLElement>) => undefined;
-  onSaveAction: (event: React.MouseEvent<HTMLElement>) => undefined;
+  onNewAction: Function;
+  onSaveAction: Function;
   onLoadAction: Function;
   gcode: string;
-  onGcodeAction: (event: React.MouseEvent<HTMLElement>) => undefined;
+  onGcodeAction: Function;
 }
 
 export default function Controls({
@@ -78,7 +78,7 @@ export default function Controls({
           <input
             type="button"
             value={t("New pattern") as string}
-            onClick={onNewAction}
+            onClick={() => onNewAction()}
           />
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function Controls({
           <input
             value={t("Save") as string}
             type="button"
-            onClick={onSaveAction}
+            onClick={() => onSaveAction()}
           />
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function Controls({
           <input
             type="button"
             value={t("Generate") as string}
-            onClick={onGcodeAction}
+            onClick={() => onGcodeAction()}
           />
         </div>
         <textarea
