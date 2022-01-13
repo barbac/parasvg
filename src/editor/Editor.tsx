@@ -6,29 +6,35 @@ import GuideMeasurements from "./GuideMeasurements";
 import Path from "./Path";
 import gcode from "../utils/gcode";
 import Controls from "./Controls";
+import ToolBox from "./ToolBox";
 import mirrorPoints from "./points";
 import { Handle } from "./points";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { selectPattern, setName, setScale } from "./patternSlice";
+import { selectPattern, setName, setScale, toggleMirror } from "./patternSlice";
+import {
+  ToolState,
+  selectToolMode,
+  setToolState as _setToolState,
+} from "./toolsSlice";
 
 const TOOL_TYPES = {
-  none: "none",
+  move: "move",
   handle: "handle",
-  hLine: "hLine",
-  vLine: "vLine",
+  hLine: "hguide",
+  vLine: "vguide",
   clear: "clear",
-  spline: "spline",
-  gcode: "gcode",
+  curve: "curve",
+  // gcode: "gcode",
 };
 
 const TOOL_KEYS: { [index: string]: any } = {
-  KeyN: TOOL_TYPES.none,
+  KeyN: TOOL_TYPES.move,
   KeyP: TOOL_TYPES.handle,
   KeyH: TOOL_TYPES.hLine,
   KeyV: TOOL_TYPES.vLine,
   KeyC: TOOL_TYPES.clear,
-  KeyS: TOOL_TYPES.spline,
-  KeyG: TOOL_TYPES.gcode,
+  KeyS: TOOL_TYPES.curve,
+  // KeyG: TOOL_TYPES.gcode,
 };
 
 const DEFAULT_SCALE = 1;
@@ -39,11 +45,12 @@ export default function Editor() {
   const pattern = useAppSelector(selectPattern);
   const [points, setPoints] = useState([] as Handle[]);
   const [guideData, setGuideData] = useState([] as Guide[]);
-  const [toolType, setToolType] = useState(TOOL_TYPES.none);
+  const toolState = useAppSelector(selectToolMode);
+  const setToolState = (toolMode: ToolState) =>
+    dispatch(_setToolState(toolMode));
   const [handleDraggingIndex, setHandleDraggingIndex] = useState(null);
   const [guideDraggingIndex, setGuidDraggingIndex] = useState(null);
   const [image, setImage] = useState("/pattern.png");
-  const [mirror, setMirror] = useState(false);
   const [gcodeString, setGcodeString] = useState("");
 
   function addHandle(e: React.MouseEvent<HTMLElement>) {
@@ -76,7 +83,7 @@ export default function Editor() {
 
   function handleGcodeAction() {
     setGcodeString(
-      gcode(mirror ? mirrorPoints(points) : points, pattern.scale)
+      gcode(pattern.mirror ? mirrorPoints(points) : points, pattern.scale)
     );
   }
 
@@ -87,15 +94,15 @@ export default function Editor() {
         setPoints([]);
         setGuideData([]);
       }
-      setToolType(TOOL_TYPES.none);
+      setToolState("move");
     } else if (key === "KeyG") {
       handleGcodeAction();
-      setToolType(TOOL_TYPES.none);
+      setToolState("move");
     } else if (key === "KeyI") {
       let reversedPoints = [...points];
       reversedPoints.reverse();
       setPoints(reversedPoints);
-      setToolType(TOOL_TYPES.none);
+      setToolState("move");
     } else if (key === "KeyR") {
       if (points.length) {
         const yAxis = points[0][0];
@@ -108,17 +115,16 @@ export default function Editor() {
 
         setPoints(reflectedPoints);
       }
-      setToolType(TOOL_TYPES.none);
+      setToolState("move");
     } else if (key === "KeyM") {
-      setMirror(!mirror);
-      setToolType(TOOL_TYPES.none);
+      dispatch(toggleMirror());
     } else {
-      setToolType(TOOL_KEYS[key]);
+      setToolState(TOOL_KEYS[key]);
     }
   }
 
   function handleHandleClick(i: number) {
-    if (toolType !== TOOL_TYPES.spline) {
+    if (toolState !== TOOL_TYPES.curve) {
       return;
     }
     let point = points[i];
@@ -211,7 +217,7 @@ export default function Editor() {
     console.log("new, clearing.");
     setPoints([]);
     setGuideData([]);
-    setToolType(TOOL_TYPES.none);
+    setToolState("move");
     setHandleDraggingIndex(null);
     setGuidDraggingIndex(null);
     dispatch(setScale(DEFAULT_SCALE));
@@ -250,7 +256,7 @@ export default function Editor() {
     console.log("loading,", name);
     setPoints(patternData.handles);
     setGuideData(patternData.guides);
-    setToolType(TOOL_TYPES.none);
+    setToolState("move");
     setHandleDraggingIndex(null);
     setGuidDraggingIndex(null);
     dispatch(setScale(patternData.scale));
@@ -258,11 +264,10 @@ export default function Editor() {
   }
 
   const TOOL_FUNCTIONS: { [index: string]: any } = {
-    none: () => {},
+    move: () => {},
     handle: addHandle,
-    hLine: addHGuide,
-    vLine: addVGuide,
-    gcode: addVGuide,
+    hguide: addHGuide,
+    vguide: addVGuide,
   };
 
   const viewBoxWidth = 1000;
@@ -289,6 +294,7 @@ export default function Editor() {
           onGcodeAction={handleGcodeAction}
         />
       </div>
+      <ToolBox />
       <svg
         id="svg"
         ref={(ref) => {
@@ -297,7 +303,7 @@ export default function Editor() {
         viewBox={viewBox}
         className="background-img"
         style={{ border: "thin solid red", height: "90vh" }}
-        onClick={TOOL_FUNCTIONS[toolType]}
+        onClick={TOOL_FUNCTIONS[toolState]}
         onMouseUp={() => {
           setHandleDraggingIndex(null);
           setGuidDraggingIndex(null);
@@ -317,7 +323,7 @@ export default function Editor() {
           height={viewBoxHeight}
           onMouseDown={setGuidDraggingIndex}
         />
-        <Path points={points} mirror={mirror} />
+        <Path points={points} mirror={pattern.mirror} />
         <Handles
           points={points}
           onMouseDown={setHandleDraggingIndex}

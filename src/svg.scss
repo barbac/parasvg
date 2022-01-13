@@ -26,6 +26,27 @@ body {
   }
 }
 
+.toolbox {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  row-gap: 5px;
+
+  button {
+    svg {
+      stroke: black;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    &.active svg {
+      stroke: LightSkyBlue;
+      fill: LightSkyBlue;
+    }
+  }
+}
+
 #svg {
   pointer-events: all;
 
