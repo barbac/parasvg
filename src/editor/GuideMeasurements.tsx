@@ -7,6 +7,8 @@ interface GuideMeasurementsProps {
   scale: number;
 }
 
+const TRIANGLE_LENGTH = 3;
+
 export default function GuideMeasurements({
   guideData,
   width,
@@ -30,9 +32,11 @@ export default function GuideMeasurements({
     <>
       {hGuides.map((pos, i) => {
         const distance = Math.abs(pos - firstHPoint);
+        const x = (width / (hGuides.length + 1)) * (i + 1);
+        const textY = firstHPoint - distance / 2;
         const points = {
-          x1: width / 2,
-          x2: width / 2,
+          x1: x,
+          x2: x,
           y1: pos,
           y2: firstHPoint,
         };
@@ -40,7 +44,19 @@ export default function GuideMeasurements({
         return (
           <g className="measurement" key={i + "h"}>
             <line {...points} />
-            <text tabIndex={i + 1} x={width / 2} y={firstHPoint - distance / 2}>
+            <polyline
+              points={`${x},${pos} ${x + TRIANGLE_LENGTH},${
+                pos + TRIANGLE_LENGTH
+              } ${x - TRIANGLE_LENGTH},${pos + TRIANGLE_LENGTH} ${x},${pos}`}
+            />
+            <polyline
+              points={`${x},${firstHPoint} ${x + TRIANGLE_LENGTH},${
+                firstHPoint - TRIANGLE_LENGTH
+              } ${x - TRIANGLE_LENGTH},${
+                firstHPoint - TRIANGLE_LENGTH
+              } ${x},${firstHPoint}`}
+            />
+            <text x={x} y={textY} onClick={() => console.log("this", x)}>
               {(distance * scale).toFixed(2)}
             </text>
           </g>
@@ -49,17 +65,31 @@ export default function GuideMeasurements({
 
       {vGuides.map((pos, i) => {
         const distance = Math.abs(pos - firstVPoint);
+        const y = (height / (vGuides.length + 1)) * (i + 1);
+        const textX = firstVPoint + distance / 2;
         const points = {
           x1: firstVPoint,
           x2: pos,
-          y1: height / 2,
-          y2: height / 2,
+          y1: y,
+          y2: y,
         };
         //TODO the measurment should go the other way if the firstPoint is shorter (firstHPoint+distance/2)
         return (
           <g className="measurement" key={i + "v"}>
             <line {...points} />
-            <text y={height / 2} x={firstVPoint + distance / 2}>
+            <polyline
+              points={`${firstVPoint},${y} ${firstVPoint + TRIANGLE_LENGTH},${
+                y + TRIANGLE_LENGTH
+              } ${firstVPoint + TRIANGLE_LENGTH},${
+                y - TRIANGLE_LENGTH
+              } ${firstVPoint},${y}`}
+            />
+            <polyline
+              points={`${pos},${y} ${pos - TRIANGLE_LENGTH},${
+                y - TRIANGLE_LENGTH
+              } ${pos - TRIANGLE_LENGTH},${y + TRIANGLE_LENGTH} ${pos},${y}`}
+            />
+            <text y={y} x={textX}>
               {(distance * scale).toFixed(2)}
             </text>
           </g>
