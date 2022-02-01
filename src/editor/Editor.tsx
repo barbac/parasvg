@@ -311,6 +311,7 @@ export default function Editor() {
         onMouseMove={handleDrag}
       >
         <image transform="scale(1)" href={image} width="100%" height="100%" />
+        <Path points={points} mirror={pattern.mirror} />
         <GuideMeasurements
           guideData={guideData}
           width={viewBoxWidth}
@@ -323,7 +324,6 @@ export default function Editor() {
           height={viewBoxHeight}
           onMouseDown={setGuidDraggingIndex}
         />
-        <Path points={points} mirror={pattern.mirror} />
         <Handles
           points={points}
           onMouseDown={setHandleDraggingIndex}
