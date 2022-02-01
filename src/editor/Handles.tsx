@@ -6,6 +6,8 @@ interface HandlesProps {
   onClick: Function;
 }
 
+const HANDLE_RADIUS = 8;
+
 export default function Handles({
   points,
   onMouseDown,
@@ -20,8 +22,13 @@ export default function Handles({
           onMouseDown={() => onMouseDown(i)}
           onClick={() => onClick(i)}
         >
-          <circle cx={x} cy={y} className={`${i ? type : "start"}`} r="15" />
-          <text x={x} y={y}>
+          <circle
+            cx={x}
+            cy={y}
+            className={`${i ? type : "start"}`}
+            r={HANDLE_RADIUS}
+          />
+          <text x={x - HANDLE_RADIUS / 2} y={y + HANDLE_RADIUS / 2}>
             {i}
           </text>
         </g>

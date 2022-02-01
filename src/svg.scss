@@ -57,6 +57,7 @@ body {
 
 #svg text {
   pointer-events: none;
+  user-select: none;
 }
 
 .handle {
@@ -66,6 +67,7 @@ body {
 
   text {
     user-select: none;
+    font-size: 10px;
   }
 
   circle.control {
@@ -95,11 +97,13 @@ g.guide {
     line {
       stroke: Plum;
       stroke-width: 1;
+      stroke-opacity: 1;
     }
   }
 
   line {
     stroke: green;
+    stroke-opacity: 0.6;
   }
 
   line.hover {
@@ -109,8 +113,14 @@ g.guide {
 }
 
 g.measurement {
-  line {
+  line,
+  polyline {
     stroke: LightSteelBlue;
+    fill: LightSteelBlue;
+    stroke-opacity: 0.6;
+    &:hover {
+      stroke-opacity: 1;
+    }
   }
 
   text {
