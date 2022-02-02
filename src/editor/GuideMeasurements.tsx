@@ -1,7 +1,8 @@
-import { Guide } from "./Guides";
+import { useAppSelector } from "../app/hooks";
+import { selectGuides } from "./patternSlice";
+import { GUIDE_HORIZONTAL } from "./Guides";
 
 interface GuideMeasurementsProps {
-  guideData: Guide[];
   width: number;
   height: number;
   scale: number;
@@ -10,23 +11,23 @@ interface GuideMeasurementsProps {
 const TRIANGLE_LENGTH = 3;
 
 export default function GuideMeasurements({
-  guideData,
   width,
   height,
   scale,
 }: GuideMeasurementsProps) {
-  const hGuides: number[] = [];
-  const vGuides: number[] = [];
-  guideData.forEach(([pos, guideType]) => {
-    if (guideType === "hLine") {
+  const guides = useAppSelector(selectGuides);
+  let hGuides: number[] = [];
+  let vGuides: number[] = [];
+  guides.forEach(({ pos, type }) => {
+    if (type === GUIDE_HORIZONTAL) {
       hGuides.push(pos);
     } else {
       vGuides.push(pos);
     }
   });
 
-  const firstHPoint = hGuides.shift() || 0; //keep ts happy with 0
-  const firstVPoint = vGuides.shift() || 0; //keep ts happy with 0
+  const firstHPoint: number = hGuides.length ? hGuides.shift()! : 0;
+  const firstVPoint: number = vGuides.length ? vGuides.shift()! : 0;
 
   return (
     <>

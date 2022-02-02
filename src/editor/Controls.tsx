@@ -2,14 +2,17 @@ import { useState } from "react";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { selectPattern, setName, setScale } from "./patternSlice";
+import {
+  selectPattern,
+  setName,
+  setScale,
+  setGuidePos,
+  selectGuides,
+} from "./patternSlice";
 import BackgroundInput from "./BackgroundInput";
-import { Guide } from "./Guides";
 
 interface ControlsProps {
   image: string;
-  guides: Guide[];
-  onChange: Function;
   onBackgroundSelected: Function;
   onNewAction: Function;
   onSaveAction: Function;
@@ -20,8 +23,6 @@ interface ControlsProps {
 
 export default function Controls({
   image,
-  guides,
-  onChange,
   onBackgroundSelected,
   onNewAction,
   onSaveAction,
@@ -30,8 +31,11 @@ export default function Controls({
   onGcodeAction,
 }: ControlsProps) {
   const { t } = useTranslation();
-  const guideInputs = guides.map((guide, i) => {
-    const value = guide[0].toFixed(2);
+  const dispatch = useAppDispatch();
+
+  const guides = useAppSelector(selectGuides);
+  const guideInputs = guides.map(({ pos }, i) => {
+    const value = pos.toFixed(2);
     return (
       <div key={i}>
         <div>{i}</div>
@@ -39,7 +43,14 @@ export default function Controls({
           <input
             type="number"
             value={value}
-            onChange={(e) => onChange(e.target.valueAsNumber, i)}
+            onChange={(e) => {
+              const value = {
+                x: e.target.valueAsNumber,
+                y: e.target.valueAsNumber,
+                index: i,
+              };
+              dispatch(setGuidePos(value));
+            }}
           />
         </div>
       </div>
@@ -47,7 +58,6 @@ export default function Controls({
   });
 
   const [imageFileName, setImageFileName] = useState("");
-  const dispatch = useAppDispatch();
   const pattern = useAppSelector(selectPattern);
 
   const PATTERN_NAME_PREFIX = "PATTERN:";

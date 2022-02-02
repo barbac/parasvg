@@ -1,23 +1,32 @@
-export type Guide = [number, "hLine" | "vLine"];
+import { useAppSelector } from "../app/hooks";
+import { selectGuides } from "./patternSlice";
+
+export type GuideOld = [number, "hLine" | "vLine"];
+
+export const GUIDE_HORIZONTAL = "h";
+export const GUIDE_VERTICAL = "v";
+
+export interface Guide {
+  type: "h" | "v";
+  originIndex: number | null;
+  pos: number;
+  direction: 1 | -1;
+  label: string;
+}
 
 export interface GuidesProps {
-  guideData: Guide[];
   width: number;
   height: number;
   onMouseDown: Function;
 }
 
-export default function Guides({
-  guideData,
-  width,
-  height,
-  onMouseDown,
-}: GuidesProps) {
+export function Guides({ width, height, onMouseDown }: GuidesProps) {
+  const guides = useAppSelector(selectGuides);
   return (
     <>
-      {guideData.map(([pos, guideType], i) => {
+      {guides.map(({ pos, type }, i) => {
         let points = {};
-        if (guideType === "hLine") {
+        if (type === GUIDE_HORIZONTAL) {
           points = {
             x1: 0,
             x2: width,

@@ -1,16 +1,26 @@
 import React, { useState } from "react";
 import Handles from "./Handles";
 import { Guide } from "./Guides";
-import Guides from "./Guides";
+import { Guides, GUIDE_HORIZONTAL, GUIDE_VERTICAL } from "./Guides";
 import GuideMeasurements from "./GuideMeasurements";
 import Path from "./Path";
 import gcode from "../utils/gcode";
+import serialization from "../utils/serialization";
 import Controls from "./Controls";
 import ToolBox from "./ToolBox";
 import mirrorPoints from "./points";
 import { Handle } from "./points";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { selectPattern, setName, setScale, toggleMirror } from "./patternSlice";
+import {
+  selectPattern,
+  selectGuides,
+  setName,
+  setScale,
+  toggleMirror,
+  clearGuides,
+  addGuide,
+  setGuidePos,
+} from "./patternSlice";
 import {
   ToolState,
   selectToolMode,
@@ -43,8 +53,8 @@ export default function Editor() {
   let svg: any;
   const dispatch = useAppDispatch();
   const pattern = useAppSelector(selectPattern);
+  const guides = useAppSelector(selectGuides);
   const [points, setPoints] = useState([] as Handle[]);
-  const [guideData, setGuideData] = useState([] as Guide[]);
   const toolState = useAppSelector(selectToolMode);
   const setToolState = (toolMode: ToolState) =>
     dispatch(_setToolState(toolMode));
@@ -65,20 +75,30 @@ export default function Editor() {
     setPoints([...points, [cursorpt.x, cursorpt.y, "end"]]);
   }
 
-  function addHGuide(e: React.MouseEvent<HTMLElement>) {
+  function createGuide(
+    e: React.MouseEvent<HTMLElement>,
+    guideType: Guide["type"]
+  ) {
     let pt = svg.createSVGPoint();
     pt.x = e.clientX;
     pt.y = e.clientY;
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
-    setGuideData([...guideData, [cursorpt.y, "hLine"]]);
+    const guide: Guide = {
+      type: guideType,
+      originIndex: null,
+      pos: guideType === GUIDE_HORIZONTAL ? cursorpt.y : cursorpt.x,
+      direction: 1,
+      label: "",
+    };
+    return guide;
+  }
+
+  function addHGuide(e: React.MouseEvent<HTMLElement>) {
+    dispatch(addGuide(createGuide(e, GUIDE_HORIZONTAL)));
   }
 
   function addVGuide(e: React.MouseEvent<HTMLElement>) {
-    let pt = svg.createSVGPoint();
-    pt.x = e.clientX;
-    pt.y = e.clientY;
-    const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
-    setGuideData([...guideData, [cursorpt.x, "vLine"]]);
+    dispatch(addGuide(createGuide(e, GUIDE_VERTICAL)));
   }
 
   function handleGcodeAction() {
@@ -92,7 +112,7 @@ export default function Editor() {
     if (key === "KeyC") {
       if (e.shiftKey) {
         setPoints([]);
-        setGuideData([]);
+        dispatch(clearGuides());
       }
       setToolState("move");
     } else if (key === "KeyG") {
@@ -156,12 +176,12 @@ export default function Editor() {
       const SNAP_DISTANCE = 20;
 
       //horizontals
-      let distance = 1000; //
+      let distance = 1000; //start with a big number to find the closests.
       let snapHGuide = null;
 
-      guideData.forEach((guide) => {
-        if (guide[1] === "hLine") {
-          const newDistance = Math.abs(guide[0] - cursorpt.y);
+      guides.forEach((guide) => {
+        if (guide.type === GUIDE_HORIZONTAL) {
+          const newDistance = Math.abs(guide.pos - cursorpt.y);
           if (newDistance < distance && newDistance < SNAP_DISTANCE) {
             snapHGuide = guide;
             distance = newDistance;
@@ -175,9 +195,9 @@ export default function Editor() {
       //vertical
       distance = 1000;
       let snapVGuide = null;
-      guideData.forEach((guide) => {
-        if (guide[1] === "vLine") {
-          const newDistance = Math.abs(guide[0] - cursorpt.x);
+      guides.forEach((guide) => {
+        if (guide.type === GUIDE_VERTICAL) {
+          const newDistance = Math.abs(guide.pos - cursorpt.x);
           if (newDistance < distance && newDistance < SNAP_DISTANCE) {
             snapVGuide = guide;
             distance = newDistance;
@@ -192,31 +212,21 @@ export default function Editor() {
       newPoints[handleDraggingIndex][1] = cursorpt.y;
       setPoints(newPoints);
     } else if (guideDraggingIndex !== null) {
-      let newGuideData = [...guideData];
-      const guide = guideData[guideDraggingIndex];
-
-      if (guide[1] === "hLine") {
-        newGuideData[guideDraggingIndex][0] = cursorpt.y;
-      } else {
-        newGuideData[guideDraggingIndex][0] = cursorpt.x;
-      }
-
-      setGuideData(newGuideData);
+      const pos = {
+        x: cursorpt.x,
+        y: cursorpt.y,
+        index: guideDraggingIndex,
+      };
+      dispatch(setGuidePos(pos));
     } else {
       console.log("wtf");
     }
   }
 
-  function handleControlsGuideChange(value: number, i: number) {
-    let newGuides = [...guideData];
-    newGuides[i][0] = value;
-    setGuideData(newGuides);
-  }
-
   function handleNewAction() {
     console.log("new, clearing.");
     setPoints([]);
-    setGuideData([]);
+    dispatch(clearGuides());
     setToolState("move");
     setHandleDraggingIndex(null);
     setGuidDraggingIndex(null);
@@ -224,22 +234,8 @@ export default function Editor() {
     dispatch(setName(""));
   }
 
-  const PATTERN_NAME_PREFIX = "PATTERN:";
   function handleSaveAction() {
-    if (pattern.name === "") {
-      return;
-    }
-    const out = {
-      name: pattern.name,
-      handles: points,
-      guides: guideData,
-      scale: pattern.scale,
-    };
-    console.log("saving", out);
-    window.localStorage.setItem(
-      PATTERN_NAME_PREFIX + pattern.name,
-      JSON.stringify(out)
-    );
+    serialization.save(points);
   }
 
   function handleLoadAction(name: string) {
@@ -249,24 +245,11 @@ export default function Editor() {
     } else if (name === pattern.name) {
       return;
     }
-
-    const patternString = window.localStorage.getItem(
-      PATTERN_NAME_PREFIX + name
-    );
-    if (!patternString) {
-      console.log(`pattern: ${name} not found`, name);
-      return;
-    }
-    const patternData = JSON.parse(patternString);
-    console.log(patternData);
-    console.log("loading,", name);
-    setPoints(patternData.handles);
-    setGuideData(patternData.guides);
+    const points = serialization.load(name);
+    setPoints(points);
     setToolState("move");
     setHandleDraggingIndex(null);
     setGuidDraggingIndex(null);
-    dispatch(setScale(patternData.scale));
-    dispatch(setName(name));
   }
 
   const TOOL_FUNCTIONS: { [index: string]: any } = {
@@ -289,9 +272,7 @@ export default function Editor() {
     >
       <div className="controls">
         <Controls
-          guides={guideData}
           image={image}
-          onChange={handleControlsGuideChange}
           onBackgroundSelected={setImage}
           onNewAction={handleNewAction}
           onSaveAction={handleSaveAction}
@@ -319,13 +300,11 @@ export default function Editor() {
         <image transform="scale(1)" href={image} width="100%" height="100%" />
         <Path points={points} mirror={pattern.mirror} />
         <GuideMeasurements
-          guideData={guideData}
           width={viewBoxWidth}
           height={viewBoxHeight}
           scale={pattern.scale}
         />
         <Guides
-          guideData={guideData}
           width={viewBoxWidth}
           height={viewBoxHeight}
           onMouseDown={setGuidDraggingIndex}
