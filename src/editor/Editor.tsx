@@ -224,6 +224,7 @@ export default function Editor() {
     dispatch(setName(""));
   }
 
+  const PATTERN_NAME_PREFIX = "PATTERN:";
   function handleSaveAction() {
     if (pattern.name === "") {
       return;
@@ -235,7 +236,10 @@ export default function Editor() {
       scale: pattern.scale,
     };
     console.log("saving", out);
-    window.localStorage.setItem(pattern.name, JSON.stringify(out));
+    window.localStorage.setItem(
+      PATTERN_NAME_PREFIX + pattern.name,
+      JSON.stringify(out)
+    );
   }
 
   function handleLoadAction(name: string) {
@@ -246,7 +250,9 @@ export default function Editor() {
       return;
     }
 
-    const patternString = window.localStorage.getItem(name);
+    const patternString = window.localStorage.getItem(
+      PATTERN_NAME_PREFIX + name
+    );
     if (!patternString) {
       console.log(`pattern: ${name} not found`, name);
       return;

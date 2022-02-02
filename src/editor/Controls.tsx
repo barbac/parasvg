@@ -50,7 +50,15 @@ export default function Controls({
   const dispatch = useAppDispatch();
   const pattern = useAppSelector(selectPattern);
 
-  const patternNames = ["", ...Object.keys(window.localStorage)];
+  const PATTERN_NAME_PREFIX = "PATTERN:";
+  const patternNames = [
+    "",
+    ...Object.keys(window.localStorage)
+      .filter((name) => {
+        return !name.indexOf(PATTERN_NAME_PREFIX);
+      })
+      .map((name) => name.replace(PATTERN_NAME_PREFIX, "")),
+  ];
   const options = patternNames.map((name) => (
     <option key={name} value={name}>
       {name}
