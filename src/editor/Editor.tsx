@@ -182,9 +182,9 @@ export default function Editor() {
 
       //horizontals
       let distance = 1000; //start with a big number to find the closests.
-      let snapHGuide = null;
+      let snapHGuide: Guide | null = null;
 
-      guides.forEach((guide) => {
+      guides.forEach((guide: Guide) => {
         if (guide.type === GUIDE_HORIZONTAL) {
           const newDistance = Math.abs(guide.pos - cursorpt.y);
           if (newDistance < distance && newDistance < SNAP_DISTANCE) {
@@ -194,7 +194,7 @@ export default function Editor() {
         }
       });
       if (snapHGuide) {
-        cursorpt.y = snapHGuide[0];
+        cursorpt.y = snapHGuide["pos"]; //using dot notationg breaks ts??
       }
 
       //vertical
@@ -210,7 +210,7 @@ export default function Editor() {
         }
       });
       if (snapVGuide) {
-        cursorpt.x = snapVGuide[0];
+        cursorpt.x = snapVGuide["pos"];
       }
 
       dispatch(
