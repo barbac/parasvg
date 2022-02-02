@@ -11,19 +11,15 @@ function load(name: string) {
   }
   const pattern = JSON.parse(patternString);
   console.log(pattern);
-  const points = pattern.points || [];
-  delete pattern.points;
   store.dispatch({ type: "pattern/setPattern", payload: pattern });
-  return points;
 }
 
-function save(points: any[]) {
+function save() {
   const { pattern } = store.getState();
   if (pattern.name === "") {
     return;
   }
-  const _pattern = Object.assign({}, pattern, { points });
-  console.log("saving", _pattern);
+  console.log("saving", pattern);
   window.localStorage.setItem(
     PATTERN_NAME_PREFIX + pattern.name,
     JSON.stringify(pattern)

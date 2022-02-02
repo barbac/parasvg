@@ -13,10 +13,15 @@ import { Handle } from "./points";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import {
   selectPattern,
+  selectVertices,
   selectGuides,
   setName,
   setScale,
   toggleMirror,
+  clearVertices,
+  setVertices,
+  addVertex,
+  setVertexValue,
   clearGuides,
   addGuide,
   setGuidePos,
@@ -54,7 +59,7 @@ export default function Editor() {
   const dispatch = useAppDispatch();
   const pattern = useAppSelector(selectPattern);
   const guides = useAppSelector(selectGuides);
-  const [points, setPoints] = useState([] as Handle[]);
+  const points = useAppSelector(selectVertices);
   const toolState = useAppSelector(selectToolMode);
   const setToolState = (toolMode: ToolState) =>
     dispatch(_setToolState(toolMode));
@@ -65,14 +70,14 @@ export default function Editor() {
 
   function addHandle(e: React.MouseEvent<HTMLElement>) {
     if (e.altKey) {
-      setPoints([]);
+      dispatch(clearVertices());
       return;
     }
     let pt = svg.createSVGPoint();
     pt.x = e.clientX;
     pt.y = e.clientY;
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
-    setPoints([...points, [cursorpt.x, cursorpt.y, "end"]]);
+    dispatch(addVertex([cursorpt.x, cursorpt.y, "end"]));
   }
 
   function createGuide(
@@ -111,7 +116,7 @@ export default function Editor() {
     const key = e.code;
     if (key === "KeyC") {
       if (e.shiftKey) {
-        setPoints([]);
+        dispatch(clearVertices());
         dispatch(clearGuides());
       }
       setToolState("move");
@@ -121,7 +126,7 @@ export default function Editor() {
     } else if (key === "KeyI") {
       let reversedPoints = [...points];
       reversedPoints.reverse();
-      setPoints(reversedPoints);
+      dispatch(setVertices(reversedPoints));
       setToolState("move");
     } else if (key === "KeyR") {
       if (points.length) {
@@ -133,7 +138,7 @@ export default function Editor() {
           return newPoint;
         });
 
-        setPoints(reflectedPoints);
+        dispatch(setVertices(reflectedPoints));
       }
       setToolState("move");
     } else if (key === "KeyM") {
@@ -157,7 +162,7 @@ export default function Editor() {
 
     let newPoints = [...points];
     newPoints.splice(i, 0, newPoint);
-    setPoints(newPoints);
+    dispatch(setVertices(newPoints));
   }
 
   function handleDrag(e: React.MouseEvent<SVGElement>) {
@@ -208,9 +213,12 @@ export default function Editor() {
         cursorpt.x = snapVGuide[0];
       }
 
-      newPoints[handleDraggingIndex][0] = cursorpt.x;
-      newPoints[handleDraggingIndex][1] = cursorpt.y;
-      setPoints(newPoints);
+      dispatch(
+        setVertexValue({
+          vertex: [cursorpt.x, cursorpt.y, newPoints[handleDraggingIndex][2]],
+          index: handleDraggingIndex,
+        })
+      );
     } else if (guideDraggingIndex !== null) {
       const pos = {
         x: cursorpt.x,
@@ -225,7 +233,7 @@ export default function Editor() {
 
   function handleNewAction() {
     console.log("new, clearing.");
-    setPoints([]);
+    dispatch(clearVertices());
     dispatch(clearGuides());
     setToolState("move");
     setHandleDraggingIndex(null);
@@ -235,7 +243,7 @@ export default function Editor() {
   }
 
   function handleSaveAction() {
-    serialization.save(points);
+    serialization.save();
   }
 
   function handleLoadAction(name: string) {
@@ -245,8 +253,7 @@ export default function Editor() {
     } else if (name === pattern.name) {
       return;
     }
-    const points = serialization.load(name);
-    setPoints(points);
+    serialization.load(name);
     setToolState("move");
     setHandleDraggingIndex(null);
     setGuidDraggingIndex(null);
