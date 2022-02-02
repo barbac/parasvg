@@ -75,12 +75,12 @@ export default function ToolBox() {
         path="M0,10 H20"
         tool="hguide"
         toolMode={toolMode}
-        title={t("horizontal guide")}
+        title={t("Horizontal guide")}
         onClick={() => dispatch(setToolState("hguide"))}
       />
 
       <Button
-        title={t("Add handle")}
+        title={t("Add vertex")}
         onClick={() => dispatch(setToolState("handle"))}
         tool="handle"
         toolMode={toolMode}
@@ -96,7 +96,7 @@ export default function ToolBox() {
       </Button>
 
       <SvgPathButton
-        title={t("convert to curve")}
+        title={t("Convert to curve")}
         onClick={() => dispatch(setToolState("curve"))}
         path={HANDLE_PATH}
         tool="curve"
