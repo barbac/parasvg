@@ -22,6 +22,8 @@ export const resources = {
       "Add vertex": "Add vertex",
       "Convert to curve": "convert to curve",
       Mirror: "Mirror",
+      Undo: "Undo",
+      Redo: "Redo",
     },
   },
   es: {
@@ -43,6 +45,8 @@ export const resources = {
       "Add vertex": "Agregar vértice",
       "Convert to curve": "Convertir a curva",
       Mirror: "Reflejar",
+      Undo: "Deshacer",
+      Redo: "Rehacer",
     },
   },
 };

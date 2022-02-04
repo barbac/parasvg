@@ -78,6 +78,9 @@ export const patternSlice = createSlice({
       guide.pos =
         guide.type === GUIDE_HORIZONTAL ? action.payload.y : action.payload.x;
     },
+    finishDragging: (state, action: PayloadAction<void>) => {
+      //dummy reducer to have an undoable action for the entire dragging movement.
+    },
   },
 });
 
@@ -93,9 +96,11 @@ export const {
   clearGuides,
   addGuide,
   setGuidePos,
+  finishDragging,
 } = patternSlice.actions;
-export const selectPattern = (state: RootState) => state.pattern;
-export const selectMirror = (state: RootState) => state.pattern.mirror;
-export const selectVertices = (state: RootState) => state.pattern.vertices;
-export const selectGuides = (state: RootState) => state.pattern.guides;
+export const selectPattern = (state: RootState) => state.pattern.present;
+export const selectMirror = (state: RootState) => state.pattern.present.mirror;
+export const selectVertices = (state: RootState) =>
+  state.pattern.present.vertices;
+export const selectGuides = (state: RootState) => state.pattern.present.guides;
 export default patternSlice.reducer;

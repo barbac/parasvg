@@ -25,6 +25,7 @@ import {
   clearGuides,
   addGuide,
   setGuidePos,
+  finishDragging,
 } from "./patternSlice";
 import {
   ToolState,
@@ -301,6 +302,7 @@ export default function Editor() {
         onMouseUp={() => {
           setHandleDraggingIndex(null);
           setGuidDraggingIndex(null);
+          dispatch(finishDragging());
         }}
         onMouseMove={handleDrag}
       >

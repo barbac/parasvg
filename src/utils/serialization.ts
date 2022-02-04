@@ -15,7 +15,7 @@ function load(name: string) {
 }
 
 function save() {
-  const { pattern } = store.getState();
+  const pattern = store.getState().pattern.present;
   if (pattern.name === "") {
     return;
   }
