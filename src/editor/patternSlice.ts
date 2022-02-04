@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../app/store";
-import { Handle } from "./points";
+import { Vertex } from "./points";
 import { Guide, GUIDE_HORIZONTAL } from "./Guides";
 
 interface PatternState {
   name: string;
-  vertices: Handle[];
+  vertices: Vertex[];
   guides: Guide[];
   scale: number;
   mirror: boolean;
@@ -26,7 +26,7 @@ interface GuidePos {
 }
 
 interface vertexValue {
-  vertex: Handle;
+  vertex: Vertex;
   index: number;
 }
 
@@ -58,10 +58,10 @@ export const patternSlice = createSlice({
     clearVertices: (state, action: PayloadAction<void>) => {
       state.vertices = [];
     },
-    setVertices: (state, action: PayloadAction<Handle[]>) => {
+    setVertices: (state, action: PayloadAction<Vertex[]>) => {
       state.vertices = action.payload;
     },
-    addVertex: (state, action: PayloadAction<Handle>) => {
+    addVertex: (state, action: PayloadAction<Vertex>) => {
       state.vertices.push(action.payload);
     },
     setVertexValue: (state, action: PayloadAction<vertexValue>) => {

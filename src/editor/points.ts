@@ -1,27 +1,32 @@
-export type Handle = [number, number, "start" | "end" | "control"];
+export interface Vertex {
+  anchor: number | null;
+  type: "end" | "control";
+  x: number;
+  y: number;
+}
 
-export function mirrorPoints(points: Array<Handle>) {
-  if (points.length < 3) {
-    return points;
+export function mirrorPoints(vertices: Array<Vertex>) {
+  if (vertices.length < 3) {
+    return vertices;
   }
-  const stopIndex = points.length - 1;
-  let newPoints: Array<Handle> = [];
-  points.forEach((point, i) => {
+  const stopIndex = vertices.length - 1;
+  let newVertices: Array<Vertex> = [];
+  vertices.forEach((vertex, i) => {
     if (i === stopIndex) {
       return;
     }
-    newPoints.push(point);
+    newVertices.push(vertex);
   });
 
-  const yAxis = points[stopIndex][0];
+  const yAxis = vertices[stopIndex].x;
   const delta = yAxis * 2;
   for (let i = stopIndex; i >= 0; i--) {
-    const point = points[i];
-    const newPoint: Handle = [...point];
-    newPoint[0] = delta - point[0];
-    newPoints.push(newPoint);
+    const vertex = vertices[i];
+    const newVertex: Vertex = { ...vertex };
+    newVertex.x = delta - vertex.x;
+    newVertices.push(newVertex);
   }
-  return newPoints;
+  return newVertices;
 }
 
 export default mirrorPoints;

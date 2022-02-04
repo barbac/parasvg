@@ -9,7 +9,7 @@ import serialization from "../utils/serialization";
 import Controls from "./Controls";
 import ToolBox from "./ToolBox";
 import mirrorPoints from "./points";
-import { Handle } from "./points";
+import { Vertex } from "./points";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import {
   selectPattern,
@@ -60,7 +60,7 @@ export default function Editor() {
   const dispatch = useAppDispatch();
   const pattern = useAppSelector(selectPattern);
   const guides = useAppSelector(selectGuides);
-  const points = useAppSelector(selectVertices);
+  const vertices = useAppSelector(selectVertices);
   const toolState = useAppSelector(selectToolMode);
   const setToolState = (toolMode: ToolState) =>
     dispatch(_setToolState(toolMode));
@@ -78,7 +78,9 @@ export default function Editor() {
     pt.x = e.clientX;
     pt.y = e.clientY;
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
-    dispatch(addVertex([cursorpt.x, cursorpt.y, "end"]));
+    dispatch(
+      addVertex({ anchor: null, x: cursorpt.x, y: cursorpt.y, type: "end" })
+    );
   }
 
   function createGuide(
@@ -109,7 +111,7 @@ export default function Editor() {
 
   function handleGcodeAction() {
     setGcodeString(
-      gcode(pattern.mirror ? mirrorPoints(points) : points, pattern.scale)
+      gcode(pattern.mirror ? mirrorPoints(vertices) : vertices, pattern.scale)
     );
   }
 
@@ -125,21 +127,20 @@ export default function Editor() {
       handleGcodeAction();
       setToolState("move");
     } else if (key === "KeyI") {
-      let reversedPoints = [...points];
-      reversedPoints.reverse();
-      dispatch(setVertices(reversedPoints));
+      let reversedVertices = [...vertices];
+      reversedVertices.reverse();
+      dispatch(setVertices(reversedVertices));
       setToolState("move");
     } else if (key === "KeyR") {
-      if (points.length) {
-        const yAxis = points[0][0];
-        let reflectedPoints = points.map((point) => {
-          const newPoint: Handle = [...point];
-          const a = point[0] - yAxis;
-          newPoint[0] = yAxis - a;
-          return newPoint;
+      if (vertices.length) {
+        const yAxis = vertices[0].x;
+        let reflectedVertices = vertices.map((vertex) => {
+          const newVertex: Vertex = { ...vertex };
+          newVertex.x = yAxis - (vertex.x - yAxis);
+          return newVertex;
         });
 
-        dispatch(setVertices(reflectedPoints));
+        dispatch(setVertices(reflectedVertices));
       }
       setToolState("move");
     } else if (key === "KeyM") {
@@ -153,17 +154,17 @@ export default function Editor() {
     if (toolState !== TOOL_TYPES.curve) {
       return;
     }
-    let point = points[i];
-    let newPoint: Handle = [...point];
+    let vertex = vertices[i];
+    let newVertex: Vertex = { ...vertex };
 
-    newPoint[2] = "control";
-    // point[3] = "S";
-    newPoint[0] = point[0] + 200;
-    newPoint[1] = point[1] + 100;
+    newVertex.type = "control";
+    const DELTA = 50;
+    newVertex.x = vertex.x + DELTA;
+    newVertex.y = vertex.y + DELTA;
 
-    let newPoints = [...points];
-    newPoints.splice(i, 0, newPoint);
-    dispatch(setVertices(newPoints));
+    let newVertexs = [...vertices];
+    newVertexs.splice(i, 0, newVertex);
+    dispatch(setVertices(newVertexs));
   }
 
   function handleDrag(e: React.MouseEvent<SVGElement>) {
@@ -177,8 +178,6 @@ export default function Editor() {
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
 
     if (handleDraggingIndex !== null) {
-      let newPoints = [...points];
-
       const SNAP_DISTANCE = 20;
 
       //horizontals
@@ -214,9 +213,15 @@ export default function Editor() {
         cursorpt.x = snapVGuide["pos"];
       }
 
+      //TODO: set anchors here.
+      const vertex = {
+        ...vertices[handleDraggingIndex],
+        x: cursorpt.x,
+        y: cursorpt.y,
+      };
       dispatch(
         setVertexValue({
-          vertex: [cursorpt.x, cursorpt.y, newPoints[handleDraggingIndex][2]],
+          vertex,
           index: handleDraggingIndex,
         })
       );
@@ -307,7 +312,7 @@ export default function Editor() {
         onMouseMove={handleDrag}
       >
         <image transform="scale(1)" href={image} width="100%" height="100%" />
-        <Path points={points} mirror={pattern.mirror} />
+        <Path vertices={vertices} mirror={pattern.mirror} />
         <GuideMeasurements
           width={viewBoxWidth}
           height={viewBoxHeight}
@@ -319,7 +324,7 @@ export default function Editor() {
           onMouseDown={setGuidDraggingIndex}
         />
         <Handles
-          points={points}
+          vertices={vertices}
           onMouseDown={setHandleDraggingIndex}
           onClick={handleHandleClick}
         />

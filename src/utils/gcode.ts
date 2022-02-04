@@ -1,12 +1,12 @@
 import { Bezier } from "bezier-js";
-import { Handle } from "../editor/points";
+import { Vertex } from "../editor/points";
 
 const zSafe = 10;
 const zCut = -5;
 const feed = 2000;
 
-export default function gcode(points: Handle[], scale: number) {
-  if (!points.length) {
+export default function gcode(vertices: Vertex[], scale: number) {
+  if (!vertices.length) {
     return "";
   }
 
@@ -15,47 +15,43 @@ export default function gcode(points: Handle[], scale: number) {
   scale *= MM_TO_CM_FACTOR;
 
   //translate to 0 and flip Y to match common cnc coordinate systems.
-  const first = points[0]; //TODO: find the closest point to bot/left
-  points = points.map((point: Handle) => {
-    let newPoint: Handle = [...point];
-    newPoint[0] = (point[0] - first[0]) * scale;
-    newPoint[1] = (point[1] - first[1]) * -scale;
-    return newPoint;
+  const first = vertices[0]; //TODO: find the closest point to bot/left
+  vertices = vertices.map((vertex: Vertex) => {
+    let newVertex: Vertex = { ...vertex };
+    newVertex.x = (vertex.x - first.x) * scale;
+    newVertex.y = (vertex.y - first.y) * -scale;
+    return newVertex;
   });
 
-  const oldPoints = points;
-  points = [...points];
+  const oldVertices = vertices;
+  vertices = [...vertices];
   console.log("generating gcode");
 
-  const firstPoint = points.shift();
+  const firstPoint = vertices.shift();
   if (!firstPoint) {
     return ""; // keeps ts happy
   }
 
   let g1Commands: string[] = [];
   // let start = null;
-  let control: Handle | null = null;
-  points.forEach((point, i) => {
-    i += 1; //ZOMG!!!! messedd up is
-    if (point[2] === "control") {
-      // start = points[i - 1];
-      control = point;
+  let control: Vertex | null = null;
+  vertices.forEach((vertex, i) => {
+    i += 1; //ZOMG!!!! messedd up i's
+    if (vertex.type === "control") {
+      // start = vertices[i - 1];
+      control = vertex;
       g1Commands.push(`(control ${i})`);
       return;
     }
 
     if (control) {
       const bezier = new Bezier(
-        // start[0],
-        // start[1],
-        // control[0],
-        // control[1],
-        oldPoints[i - 2][0],
-        oldPoints[i - 2][1],
-        oldPoints[i - 1][0],
-        oldPoints[i - 1][1],
-        point[0],
-        point[1]
+        oldVertices[i - 2].x,
+        oldVertices[i - 2].y,
+        oldVertices[i - 1].x,
+        oldVertices[i - 1].y,
+        vertex.x,
+        vertex.y
       );
       //TODO add steps arg.
       const steps = 30;
@@ -65,12 +61,12 @@ export default function gcode(points: Handle[], scale: number) {
       control = null;
       // start = null;
     } else {
-      g1Commands.push(`G1 X${point[0]} Y${point[1]} (${i})`);
+      g1Commands.push(`G1 X${vertex.x} Y${vertex.y} (${i})`);
     }
   });
 
   const gcodeText = `G0 Z${zSafe}
-G0 X${firstPoint[0]} Y${firstPoint[1]} (0)
+G0 X${firstPoint.x} Y${firstPoint.y} (0)
 G1 Z${zCut} F${feed}
 ${g1Commands.join("\n")}
 G0 Z${zSafe}

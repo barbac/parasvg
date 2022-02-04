@@ -1,21 +1,21 @@
-import { Handle, mirrorPoints } from "./points";
+import { Vertex, mirrorPoints } from "./points";
 
 interface PathProps {
-  points: Handle[];
+  vertices: Vertex[];
   mirror: boolean;
 }
 
-export default function Path({ points, mirror }: PathProps) {
-  if (!points.length) {
+export default function Path({ vertices, mirror }: PathProps) {
+  if (!vertices.length) {
     return null;
   }
 
-  points = mirror ? mirrorPoints(points) : points;
+  vertices = mirror ? mirrorPoints(vertices) : vertices;
 
   let spline = false;
-  const commands = points.map((point, i) => {
-    const [x, y] = point;
-    if (point[2] === "control") {
+  const commands = vertices.map((vertex, i) => {
+    const { x, y } = vertex;
+    if (vertex.type === "control") {
       spline = true;
       return `Q ${x},${y}`;
     } else {
@@ -28,7 +28,7 @@ export default function Path({ points, mirror }: PathProps) {
   });
 
   const path =
-    `M ${points[0][0]}, ${points[0][1]}\n` + commands.join("\n") + " Z";
+    `M ${vertices[0].x}, ${vertices[0].y}\n` + commands.join("\n") + " Z";
 
   return (
     <path

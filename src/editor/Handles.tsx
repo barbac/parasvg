@@ -1,7 +1,7 @@
-import { Handle } from "./points";
+import { Vertex } from "./points";
 
 interface HandlesProps {
-  points: Handle[];
+  vertices: Vertex[];
   onMouseDown: Function;
   onClick: Function;
 }
@@ -9,13 +9,13 @@ interface HandlesProps {
 const HANDLE_RADIUS = 8;
 
 export default function Handles({
-  points,
+  vertices,
   onMouseDown,
   onClick,
 }: HandlesProps) {
   return (
     <>
-      {points.map(([x, y, type], i) => (
+      {vertices.map(({ x, y, type }, i) => (
         <g
           key={i}
           className="handle"
