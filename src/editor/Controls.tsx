@@ -92,7 +92,6 @@ export default function Controls({
 
       <div>
         <div>
-          {t("New pattern")}
           <input
             type="button"
             value={t("New pattern") as string}
