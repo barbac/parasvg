@@ -34,11 +34,11 @@ export default function Controls({
   const dispatch = useAppDispatch();
 
   const guides = useAppSelector(selectGuides);
-  const guideInputs = guides.map(({ pos }, i) => {
+  const guideInputs = guides.map(({ pos, label }, i) => {
     const value = pos.toFixed(2);
     return (
       <div key={i}>
-        <div>{i}</div>
+        <div>{label || i}</div>
         <div>
           <input
             type="number"

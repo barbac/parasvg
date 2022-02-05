@@ -73,6 +73,12 @@ export const patternSlice = createSlice({
     addGuide: (state, action: PayloadAction<Guide>) => {
       state.guides.push(action.payload);
     },
+    setGuideLabel: (
+      state,
+      action: PayloadAction<{ label: string; index: number }>
+    ) => {
+      state.guides[action.payload.index].label = action.payload.label;
+    },
     setGuidePos: (state, action: PayloadAction<GuidePos>) => {
       const guideIndex = action.payload.index;
       let guide = state.guides[guideIndex];
@@ -107,6 +113,7 @@ export const {
   setVertexValue,
   clearGuides,
   addGuide,
+  setGuideLabel,
   setGuidePos,
   finishDragging,
 } = patternSlice.actions;
