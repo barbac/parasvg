@@ -1,5 +1,6 @@
 export interface Vertex {
-  anchor: number | null;
+  anchorX: number | null;
+  anchorY: number | null;
   type: "end" | "control";
   x: number;
   y: number;

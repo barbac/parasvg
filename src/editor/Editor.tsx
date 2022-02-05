@@ -79,7 +79,13 @@ export default function Editor() {
     pt.y = e.clientY;
     const cursorpt = pt.matrixTransform(svg.getScreenCTM().inverse());
     dispatch(
-      addVertex({ anchor: null, x: cursorpt.x, y: cursorpt.y, type: "end" })
+      addVertex({
+        anchorX: null,
+        anchorY: null,
+        x: cursorpt.x,
+        y: cursorpt.y,
+        type: "end",
+      })
     );
   }
 
@@ -183,12 +189,14 @@ export default function Editor() {
       //horizontals
       let distance = 1000; //start with a big number to find the closests.
       let snapHGuide: Guide | null = null;
+      let snapHGuideIndex = null;
 
-      guides.forEach((guide: Guide) => {
+      guides.forEach((guide: Guide, i) => {
         if (guide.type === GUIDE_HORIZONTAL) {
           const newDistance = Math.abs(guide.pos - cursorpt.y);
           if (newDistance < distance && newDistance < SNAP_DISTANCE) {
             snapHGuide = guide;
+            snapHGuideIndex = i;
             distance = newDistance;
           }
         }
@@ -200,11 +208,13 @@ export default function Editor() {
       //vertical
       distance = 1000;
       let snapVGuide = null;
-      guides.forEach((guide) => {
+      let snapVGuideIndex = -1;
+      guides.forEach((guide, i) => {
         if (guide.type === GUIDE_VERTICAL) {
           const newDistance = Math.abs(guide.pos - cursorpt.x);
           if (newDistance < distance && newDistance < SNAP_DISTANCE) {
             snapVGuide = guide;
+            snapVGuideIndex = i;
             distance = newDistance;
           }
         }
@@ -213,9 +223,10 @@ export default function Editor() {
         cursorpt.x = snapVGuide["pos"];
       }
 
-      //TODO: set anchors here.
       const vertex = {
-        ...vertices[handleDraggingIndex],
+        type: vertices[handleDraggingIndex].type,
+        anchorY: snapHGuideIndex,
+        anchorX: snapVGuideIndex,
         x: cursorpt.x,
         y: cursorpt.y,
       };
@@ -233,7 +244,7 @@ export default function Editor() {
       };
       dispatch(setGuidePos(pos));
     } else {
-      console.log("wtf");
+      console.error("weird");
     }
   }
 

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../app/store";
 import { Vertex } from "./points";
-import { Guide, GUIDE_HORIZONTAL } from "./Guides";
+import { Guide, GUIDE_HORIZONTAL, GUIDE_VERTICAL } from "./Guides";
 
 interface PatternState {
   name: string;
@@ -74,9 +74,21 @@ export const patternSlice = createSlice({
       state.guides.push(action.payload);
     },
     setGuidePos: (state, action: PayloadAction<GuidePos>) => {
-      let guide = state.guides[action.payload.index];
-      guide.pos =
-        guide.type === GUIDE_HORIZONTAL ? action.payload.y : action.payload.x;
+      const guideIndex = action.payload.index;
+      let guide = state.guides[guideIndex];
+      const { x, y } = action.payload;
+      guide.pos = guide.type === GUIDE_HORIZONTAL ? y : x;
+
+      state.vertices.forEach((vertex) => {
+        if (guide.type === GUIDE_HORIZONTAL && vertex.anchorY === guideIndex) {
+          vertex.y = y;
+        } else if (
+          guide.type === GUIDE_VERTICAL &&
+          vertex.anchorX === guideIndex
+        ) {
+          vertex.x = x;
+        }
+      });
     },
     finishDragging: (state, action: PayloadAction<void>) => {
       //dummy reducer to have an undoable action for the entire dragging movement.
