@@ -16,12 +16,17 @@ body {
     form > div {
       margin-bottom: 15px;
     }
-  }
-  .controls label {
-    display: flex;
 
-    div:last-of-type {
-      padding-left: 20px;
+    select {
+      min-width: 10em;
+    }
+
+    label {
+      display: flex;
+
+      div:last-of-type {
+        padding-left: 20px;
+      }
     }
   }
 }
@@ -56,15 +61,10 @@ body {
 }
 
 #svg text {
-  pointer-events: none;
   user-select: none;
 }
 
 .handle {
-  // * {
-  //     pointer-events: none;
-  // }
-
   text {
     user-select: none;
     font-size: 10px;
