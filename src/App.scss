@@ -1,0 +1,77 @@
+body {
+  background-color: #313131;
+  color: white;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.container {
+  display: flex;
+
+  button.toggle-controls {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media screen and (max-device-width: 800px) {
+  .container {
+    display: block;
+    position: relative;
+    > * {
+      position: absolute;
+      left: 0;
+    }
+    > div {
+      z-index: 3;
+    }
+    .toolbox {
+      margin: 0;
+      width: 30px;
+      .toggle-controls {
+        position: absolute;
+        left: 55px;
+      }
+    }
+  }
+}
+
+.controls {
+  form > div {
+    margin-bottom: 15px;
+    text-align: right;
+  }
+
+  select {
+    min-width: 10em;
+  }
+
+  label {
+    display: flex;
+
+    div:last-of-type {
+      padding-left: 20px;
+    }
+  }
+}
+
+.toolbox .tools {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  row-gap: 5px;
+
+  button {
+    svg {
+      stroke: black;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    &.active svg {
+      stroke: LightSkyBlue;
+      fill: LightSkyBlue;
+    }
+  }
+}

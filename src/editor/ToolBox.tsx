@@ -3,6 +3,7 @@ import { selectToolMode, setToolState } from "./toolsSlice";
 import { toggleMirror, selectMirror } from "./patternSlice";
 import { useTranslation } from "react-i18next";
 import { ActionCreators } from "redux-undo";
+import { ControlsWrapper } from "./ControlsWrapper";
 
 interface BaseButtonProps {
   title: string;
@@ -56,80 +57,82 @@ export default function ToolBox() {
   const { t } = useTranslation();
 
   return (
-    <div className="toolbox">
-      <Button
-        title={t("Move")}
-        onClick={() => dispatch(setToolState("move"))}
-        tool="move"
-        toolMode={toolMode}
-      >
-        <svg viewBox="0 0 320 512" width="25" height="25">
-          <path d={MOVE_PATH} />
-        </svg>
-      </Button>
+    <ControlsWrapper className="toolbox">
+      <div className="tools">
+        <Button
+          title={t("Move")}
+          onClick={() => dispatch(setToolState("move"))}
+          tool="move"
+          toolMode={toolMode}
+        >
+          <svg viewBox="0 0 320 512" width="25" height="25">
+            <path d={MOVE_PATH} />
+          </svg>
+        </Button>
 
-      <SvgPathButton
-        path="M10,0 V20"
-        tool="vguide"
-        toolMode={toolMode}
-        title={t("Vertical guide")}
-        onClick={() => dispatch(setToolState("vguide"))}
-      />
+        <SvgPathButton
+          path="M10,0 V20"
+          tool="vguide"
+          toolMode={toolMode}
+          title={t("Vertical guide")}
+          onClick={() => dispatch(setToolState("vguide"))}
+        />
 
-      <SvgPathButton
-        path="M0,10 H20"
-        tool="hguide"
-        toolMode={toolMode}
-        title={t("Horizontal guide")}
-        onClick={() => dispatch(setToolState("hguide"))}
-      />
+        <SvgPathButton
+          path="M0,10 H20"
+          tool="hguide"
+          toolMode={toolMode}
+          title={t("Horizontal guide")}
+          onClick={() => dispatch(setToolState("hguide"))}
+        />
 
-      <Button
-        title={t("Add vertex")}
-        onClick={() => dispatch(setToolState("handle"))}
-        tool="handle"
-        toolMode={toolMode}
-      >
-        <svg width={BUTTON_LENGHT} height={BUTTON_LENGHT}>
-          <circle
-            cx={BUTTON_LENGHT / 2}
-            cy={BUTTON_LENGHT / 2}
-            r={BUTTON_LENGHT * 0.25}
-            fill="#000"
-          />
-        </svg>
-      </Button>
+        <Button
+          title={t("Add vertex")}
+          onClick={() => dispatch(setToolState("handle"))}
+          tool="handle"
+          toolMode={toolMode}
+        >
+          <svg width={BUTTON_LENGHT} height={BUTTON_LENGHT}>
+            <circle
+              cx={BUTTON_LENGHT / 2}
+              cy={BUTTON_LENGHT / 2}
+              r={BUTTON_LENGHT * 0.25}
+              fill="#000"
+            />
+          </svg>
+        </Button>
 
-      <SvgPathButton
-        title={t("Convert to curve")}
-        onClick={() => dispatch(setToolState("curve"))}
-        path={HANDLE_PATH}
-        tool="curve"
-        toolMode={toolMode}
-      />
+        <SvgPathButton
+          title={t("Convert to curve")}
+          onClick={() => dispatch(setToolState("curve"))}
+          path={HANDLE_PATH}
+          tool="curve"
+          toolMode={toolMode}
+        />
 
-      <SvgPathButton
-        title={t("Mirror")}
-        onClick={() => dispatch(toggleMirror())}
-        path={MIRROR_PATH}
-        tool="mirror"
-        toolMode={mirror ? "mirror" : ""}
-      />
+        <SvgPathButton
+          title={t("Mirror")}
+          onClick={() => dispatch(toggleMirror())}
+          path={MIRROR_PATH}
+          tool="mirror"
+          toolMode={mirror ? "mirror" : ""}
+        />
 
-      <SvgPathButton
-        title={t("Undo")}
-        onClick={() => dispatch(ActionCreators.undo())}
-        path={UNDO_PATH}
-        tool="undo"
-        toolMode={""}
-      />
-      <SvgPathButton
-        title={t("Redo")}
-        onClick={() => dispatch(ActionCreators.redo())}
-        path={REDO_PATH}
-        tool="redo"
-        toolMode={""}
-      />
-    </div>
+        <SvgPathButton
+          title={t("Undo")}
+          onClick={() => dispatch(ActionCreators.undo())}
+          path={UNDO_PATH}
+          tool="undo"
+          toolMode={""}
+        />
+        <SvgPathButton
+          title={t("Redo")}
+          onClick={() => dispatch(ActionCreators.redo())}
+          path={REDO_PATH}
+          tool="redo"
+          toolMode={""}
+        />
+      </div>
+    </ControlsWrapper>
   );
 }

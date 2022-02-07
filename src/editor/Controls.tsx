@@ -10,6 +10,7 @@ import {
   selectGuides,
 } from "./patternSlice";
 import BackgroundInput from "./BackgroundInput";
+import { ControlsWrapper } from "./ControlsWrapper";
 
 interface ControlsProps {
   image: string;
@@ -76,108 +77,110 @@ export default function Controls({
   ));
 
   return (
-    <form>
-      <div>
-        <input
-          type="button"
-          value="English"
-          onClick={() => i18n.changeLanguage("en")}
-        />
-        <input
-          type="button"
-          value="Español"
-          onClick={() => i18n.changeLanguage("es")}
-        />
-      </div>
-
-      <div>
+    <ControlsWrapper className="controls">
+      <form>
         <div>
           <input
             type="button"
-            value={t("New pattern") as string}
-            onClick={() => onNewAction()}
+            value="English"
+            onClick={() => i18n.changeLanguage("en")}
           />
-        </div>
-      </div>
-
-      <div>
-        <div>{t("Patterns")}</div>
-        <div>
-          <select onChange={(e) => onLoadAction(e.target.value)}>
-            {options}
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <div>{t("New name")}</div>
-        <div>
-          <input
-            type="text"
-            value={pattern.name}
-            onChange={(e) => dispatch(setName(e.target.value))}
-          />
-        </div>
-        <div>
-          <input
-            value={t("Save") as string}
-            type="button"
-            onClick={() => onSaveAction()}
-          />
-        </div>
-      </div>
-
-      <div>
-        <div>{t("Background image url")}</div>
-        <div>
-          <input
-            type="text"
-            value={imageFileName}
-            onChange={(e) => {
-              const value = e.target.value;
-              setImageFileName(value);
-              onBackgroundSelected(value);
-            }}
-          />
-        </div>
-      </div>
-
-      <BackgroundInput
-        onChange={(filename, img) => {
-          setImageFileName(filename);
-          onBackgroundSelected(img);
-        }}
-      />
-
-      <div>
-        <div>{t("Scale")}</div>
-        <div>
-          <input
-            type="number"
-            value={pattern.scale}
-            onChange={(e) => dispatch(setScale(e.target.valueAsNumber))}
-          />
-        </div>
-      </div>
-
-      <div>{t("Guides")}</div>
-      {guideInputs}
-
-      <div>
-        <div>{t("gcode")}</div>
-        <div>
           <input
             type="button"
-            value={t("Generate") as string}
-            onClick={() => onGcodeAction()}
+            value="Español"
+            onClick={() => i18n.changeLanguage("es")}
           />
         </div>
-        <textarea
-          value={gcode}
-          readOnly={true}
-          onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+
+        <div>
+          <div>
+            <input
+              type="button"
+              value={t("New pattern") as string}
+              onClick={() => onNewAction()}
+            />
+          </div>
+        </div>
+
+        <div>
+          <div>{t("Patterns")}</div>
+          <div>
+            <select onChange={(e) => onLoadAction(e.target.value)}>
+              {options}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div>{t("New name")}</div>
+          <div>
+            <input
+              type="text"
+              value={pattern.name}
+              onChange={(e) => dispatch(setName(e.target.value))}
+            />
+          </div>
+          <div>
+            <input
+              value={t("Save") as string}
+              type="button"
+              onClick={() => onSaveAction()}
+            />
+          </div>
+        </div>
+
+        <div>
+          <div>{t("Background image url")}</div>
+          <div>
+            <input
+              type="text"
+              value={imageFileName}
+              onChange={(e) => {
+                const value = e.target.value;
+                setImageFileName(value);
+                onBackgroundSelected(value);
+              }}
+            />
+          </div>
+        </div>
+
+        <BackgroundInput
+          onChange={(filename, img) => {
+            setImageFileName(filename);
+            onBackgroundSelected(img);
+          }}
         />
-      </div>
-    </form>
+
+        <div>
+          <div>{t("Scale")}</div>
+          <div>
+            <input
+              type="number"
+              value={pattern.scale}
+              onChange={(e) => dispatch(setScale(e.target.valueAsNumber))}
+            />
+          </div>
+        </div>
+
+        <div>{t("Guides")}</div>
+        {guideInputs}
+
+        <div>
+          <div>{t("gcode")}</div>
+          <div>
+            <input
+              type="button"
+              value={t("Generate") as string}
+              onClick={() => onGcodeAction()}
+            />
+          </div>
+          <textarea
+            value={gcode}
+            readOnly={true}
+            onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+          />
+        </div>
+      </form>
+    </ControlsWrapper>
   );
 }

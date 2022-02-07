@@ -313,7 +313,7 @@ export default function Editor() {
         }}
         viewBox={viewBox}
         className="background-img"
-        style={{ border: "thin solid red", height: "90vh" }}
+        style={{ border: "thin solid red", height: "100vh" }}
         onClick={TOOL_FUNCTIONS[toolState]}
         onMouseUp={() => {
           setHandleDraggingIndex(null);
@@ -322,7 +322,7 @@ export default function Editor() {
         }}
         onMouseMove={handleDrag}
       >
-        <image transform="scale(1)" href={image} width="100%" height="100%" />
+        <image href={image} height="100%" />
         <Path vertices={vertices} mirror={pattern.mirror} />
         <GuideMeasurements
           width={viewBoxWidth}
