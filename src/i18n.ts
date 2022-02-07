@@ -57,9 +57,9 @@ i18n
   .init({
     resources,
     interpolation: {
-      escapeValue: false, // react already safes from xss
+      escapeValue: false, // react already escapes
     },
     detection: {
-      order: ["navigator", "htmlTag"],
+      order: ["localStorage", "navigator", "htmlTag"],
     },
   });
