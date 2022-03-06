@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { selectGuides, setGuideLabel, setGuidePos } from "./patternSlice";
+import { selectGuides, setGuideLabel, setGuideLength } from "./patternSlice";
 import { GUIDE_HORIZONTAL } from "./Guides";
 
 const TRIANGLE_LENGTH = 3;
@@ -59,12 +59,11 @@ function InputField({
             onClick={(e) => e.stopPropagation()}
             type="number"
             placeholder={t("value")}
+            value={guide.length}
             onChange={(e) => {
               const value = e.target.valueAsNumber;
               if (!Number.isNaN(value)) {
-                const x = firstPoint + value / scale;
-                const y = x;
-                dispatch(setGuidePos({ x, y, index }));
+                dispatch(setGuideLength({ length: value, index }));
               }
             }}
           />
@@ -82,11 +81,11 @@ export default function GuideMeasurements({
   const guides = useAppSelector(selectGuides);
   let hGuides: number[][] = [];
   let vGuides: number[][] = [];
-  guides.forEach(({ pos, type }, i) => {
+  guides.forEach(({ pos, length, type }, i) => {
     if (type === GUIDE_HORIZONTAL) {
-      hGuides.push([pos, i]);
+      hGuides.push([pos, length, i]);
     } else {
-      vGuides.push([pos, i]);
+      vGuides.push([pos, length, i]);
     }
   });
 
@@ -95,7 +94,7 @@ export default function GuideMeasurements({
 
   return (
     <>
-      {hGuides.map(([pos, guideIndex], i) => {
+      {hGuides.map(([pos, length, guideIndex], i) => {
         const distance = Math.abs(pos - firstHPoint);
         const x = (width / (hGuides.length + 1)) * (i + 1);
         const textY = firstHPoint - distance / 2;
@@ -129,13 +128,13 @@ export default function GuideMeasurements({
               } ${x},${firstHPoint}`}
             />
             <text x={x} y={textY + 15}>
-              {(distance * scale).toFixed(2)}
+              {length}
             </text>
           </InputField>
         );
       })}
 
-      {vGuides.map(([pos, guideIndex], i) => {
+      {vGuides.map(([pos, length, guideIndex], i) => {
         const distance = Math.abs(pos - firstVPoint);
         const y = (height / (vGuides.length + 1)) * (i + 1);
         const textX = firstVPoint + distance / 2;
@@ -169,7 +168,7 @@ export default function GuideMeasurements({
               } ${pos - TRIANGLE_LENGTH},${y + TRIANGLE_LENGTH} ${pos},${y}`}
             />
             <text y={y + 15} x={textX}>
-              {(distance * scale).toFixed(2)}
+              {length}
             </text>
           </InputField>
         );

@@ -10,6 +10,7 @@ export interface Guide {
   type: "h" | "v";
   originIndex: number | null;
   pos: number;
+  length: number;
   direction: 1 | -1;
   label: string;
 }

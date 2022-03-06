@@ -6,7 +6,7 @@ import {
   selectPattern,
   setName,
   setScale,
-  setGuidePos,
+  setGuideLength,
   selectGuides,
 } from "./patternSlice";
 import BackgroundInput from "./BackgroundInput";
@@ -35,22 +35,24 @@ export default function Controls({
   const dispatch = useAppDispatch();
 
   const guides = useAppSelector(selectGuides);
-  const guideInputs = guides.map(({ pos, label }, i) => {
-    const value = pos.toFixed(2);
+  const guideInputs = guides.map(({ length, label }, i) => {
+    if (i < 2) {
+      //Don't display origins
+      return null;
+    }
     return (
       <div key={i}>
-        <div>{label || i}</div>
+        <div>{label || i - 1 /*start counting at 1*/}</div>
         <div>
           <input
             type="number"
-            value={value}
+            value={length}
             onChange={(e) => {
               const value = {
-                x: e.target.valueAsNumber,
-                y: e.target.valueAsNumber,
+                length: e.target.valueAsNumber,
                 index: i,
               };
-              dispatch(setGuidePos(value));
+              dispatch(setGuideLength(value));
             }}
           />
         </div>

@@ -1,7 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../app/store";
 
-export type ToolState = "move" | "hguide" | "vguide" | "handle" | "curve";
+export type ToolState =
+  | "move"
+  | "hguide"
+  | "vguide"
+  | "scale"
+  | "handle"
+  | "curve";
 
 const initialState = {
   toolMode: "move",
