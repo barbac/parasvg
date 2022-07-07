@@ -11,6 +11,7 @@ import {
 } from "./patternSlice";
 import BackgroundInput from "./BackgroundInput";
 import { ControlsWrapper } from "./ControlsWrapper";
+import Parameters from "./Parameters";
 
 interface ControlsProps {
   image: string;
@@ -35,7 +36,7 @@ export default function Controls({
   const dispatch = useAppDispatch();
 
   const guides = useAppSelector(selectGuides);
-  const guideInputs = guides.map(({ length, label }, i) => {
+  const guideInputs = guides.map(({ lengthExpresion, label }, i) => {
     if (i < 2) {
       //Don't display origins
       return null;
@@ -45,11 +46,11 @@ export default function Controls({
         <div>{label || i - 1 /*start counting at 1*/}</div>
         <div>
           <input
-            type="number"
-            value={length}
+            type="text"
+            value={lengthExpresion}
             onChange={(e) => {
               const value = {
-                length: e.target.valueAsNumber,
+                length: e.target.value,
                 index: i,
               };
               dispatch(setGuideLength(value));
@@ -163,6 +164,9 @@ export default function Controls({
             />
           </div>
         </div>
+
+        <div>{t("Parameters")}</div>
+        <Parameters />
 
         <div>{t("Guides")}</div>
         {guideInputs}

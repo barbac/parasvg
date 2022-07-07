@@ -57,14 +57,12 @@ function InputField({
         <foreignObject width="100" height="1.5em" x={x + 20} y={y - 20}>
           <input
             onClick={(e) => e.stopPropagation()}
-            type="number"
+            type="text"
             placeholder={t("value")}
-            value={guide.length}
+            value={guide.lengthExpresion}
             onChange={(e) => {
-              const value = e.target.valueAsNumber;
-              if (!Number.isNaN(value)) {
-                dispatch(setGuideLength({ length: value, index }));
-              }
+              const value = e.target.value;
+              dispatch(setGuideLength({ length: value, index }));
             }}
           />
         </foreignObject>

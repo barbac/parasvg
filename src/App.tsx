@@ -5,6 +5,7 @@ import Editor from "./editor/Editor";
 
 function App() {
   // const Path = paths.Clock;
+  // return <Path />;
 
   return <Editor />;
 }

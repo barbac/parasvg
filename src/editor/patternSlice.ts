@@ -1,7 +1,15 @@
+import { create, all } from "mathjs";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../app/store";
 import { Vertex } from "./points";
 import { Guide, GUIDE_HORIZONTAL, GUIDE_VERTICAL } from "./Guides";
+
+const math = create(all);
+
+interface Parameters {
+  name: string;
+  parameters: { [key: string]: number };
+}
 
 interface PatternState {
   name: string;
@@ -9,6 +17,7 @@ interface PatternState {
   guides: Guide[];
   scale: number;
   mirror: boolean;
+  parameters: Parameters[];
 }
 
 const initialState: PatternState = {
@@ -24,6 +33,7 @@ const initialState: PatternState = {
       //TODO: calculate svg height and set it as default pos
       pos: 500,
       length: 500,
+      lengthExpresion: 500,
       direction: 1,
       label: "",
     },
@@ -32,8 +42,24 @@ const initialState: PatternState = {
       originIndex: null,
       pos: 30,
       length: 30,
+      lengthExpresion: 30,
       direction: 1,
       label: "",
+    },
+  ],
+  parameters: [
+    {
+      name: "body",
+      parameters: {
+        Waist: 94,
+        Shoulder: 20,
+      },
+    },
+    {
+      name: "customization",
+      parameters: {
+        "Waist extra": 1,
+      },
     },
   ],
 };
@@ -49,13 +75,19 @@ interface GuidePos {
 }
 
 interface GuideLength {
-  length: number;
+  length: string;
   index: number;
 }
 
 interface vertexValue {
   vertex: Vertex;
   index: number;
+}
+
+interface ParameterValue {
+  index: number;
+  name: string;
+  value: number;
 }
 
 function calculateLength(guide: Guide, guides: Guide[], scale: number) {
@@ -86,18 +118,63 @@ function updateAnchoredVertices(
   });
 }
 
+function computeGuideLength(
+  lengthExpresion: number | string,
+  guideIndex: number,
+  state: PatternState
+) {
+  //x or y origin
+  if (guideIndex < NON_ORIGINS_START_INDEX) {
+    return;
+  }
+
+  let guide = state.guides[guideIndex];
+  guide.lengthExpresion = lengthExpresion;
+
+  let guideLength = 0;
+  try {
+    let scope: { [key: string]: number } = {};
+    state.parameters.forEach((p) => {
+      for (const key in p.parameters) {
+        scope[key] = p.parameters[key];
+      }
+    });
+    guideLength = math.evaluate(`${lengthExpresion}`, scope);
+  } catch (e) {
+    //TODO: report it or give feedback somehow.
+    console.log(e);
+    return;
+  }
+  if (typeof guideLength !== "number") {
+    return;
+  }
+
+  guide.length = guideLength;
+  if (guide.type === GUIDE_HORIZONTAL) {
+    const originGuide = state.guides[HORIZONTAL_GUIDE_INDEX];
+    guide.pos = originGuide.pos - guide.length / state.scale;
+  } else {
+    const originGuide = state.guides[VERTICAL_GUIDE_INDEX];
+    guide.pos = originGuide.pos + guide.length / state.scale;
+  }
+
+  updateAnchoredVertices(state.vertices, guide, guideIndex);
+}
+
 export const patternSlice = createSlice({
   name: "pattern",
   initialState,
   reducers: {
     setPattern: (state, action: PayloadAction<PatternState>) => {
       console.log("loading state");
-      const { name, scale, mirror, vertices, guides } = action.payload;
+      const { name, scale, mirror, vertices, guides, parameters } =
+        action.payload;
       state.name = name;
       state.scale = scale;
       state.mirror = mirror;
       state.vertices = vertices;
       state.guides = guides;
+      state.parameters = parameters;
     },
     setName: (state, action: PayloadAction<string>) => {
       state.name = action.payload;
@@ -106,9 +183,16 @@ export const patternSlice = createSlice({
       const oldScale = state.scale;
       state.scale = action.payload;
       const scaleFactor = state.scale / oldScale;
-      state.guides.forEach((guide) => {
+      state.guides.forEach((guide, i) => {
+        const oldLength = guide.length;
         guide.length *= scaleFactor;
         guide.length = Math.round(guide.length * 100) / 100;
+        if (guide.lengthExpresion === oldLength) {
+          guide.lengthExpresion = guide.length;
+        }
+        state.guides.forEach((guide, i) => {
+          computeGuideLength(guide.lengthExpresion, i, state);
+        });
       });
     },
     setMirror: (state, action: PayloadAction<boolean>) => {
@@ -136,6 +220,7 @@ export const patternSlice = createSlice({
       const lastIndex = state.guides.push(action.payload) - 1;
       let lastGuide = state.guides[lastIndex];
       lastGuide.length = calculateLength(lastGuide, state.guides, state.scale);
+      lastGuide.lengthExpresion = lastGuide.length;
     },
     setGuideLabel: (
       state,
@@ -160,37 +245,35 @@ export const patternSlice = createSlice({
         ) {
           let nonOriginGuide = state.guides[i];
           if (nonOriginGuide.type === guide.type) {
-            nonOriginGuide.length = calculateLength(
-              nonOriginGuide,
-              state.guides,
-              state.scale
-            );
+            if (nonOriginGuide.length === nonOriginGuide.lengthExpresion) {
+              nonOriginGuide.length = calculateLength(
+                nonOriginGuide,
+                state.guides,
+                state.scale
+              );
+              nonOriginGuide.lengthExpresion = nonOriginGuide.length;
+            } else {
+              computeGuideLength(nonOriginGuide.lengthExpresion, i, state);
+            }
           }
         }
       } else {
         guide.length = calculateLength(guide, state.guides, state.scale);
+        guide.lengthExpresion = guide.length;
       }
 
       updateAnchoredVertices(state.vertices, guide, guideIndex);
     },
     setGuideLength: (state, action: PayloadAction<GuideLength>) => {
       const guideIndex = action.payload.index;
-      //x or y origin
-      if (guideIndex < NON_ORIGINS_START_INDEX) {
-        return;
-      }
-
-      let guide = state.guides[guideIndex];
-      guide.length = action.payload.length;
-      if (guide.type === GUIDE_HORIZONTAL) {
-        const originGuide = state.guides[HORIZONTAL_GUIDE_INDEX];
-        guide.pos = originGuide.pos - guide.length / state.scale;
-      } else {
-        const originGuide = state.guides[VERTICAL_GUIDE_INDEX];
-        guide.pos = originGuide.pos + guide.length / state.scale;
-      }
-
-      updateAnchoredVertices(state.vertices, guide, guideIndex);
+      computeGuideLength(action.payload.length, guideIndex, state);
+    },
+    setParameterValue: (state, action: PayloadAction<ParameterValue>) => {
+      state.parameters[action.payload.index].parameters[action.payload.name] =
+        action.payload.value;
+      state.guides.forEach((guide, i) => {
+        computeGuideLength(guide.lengthExpresion, i, state);
+      });
     },
     finishDragging: (state, action: PayloadAction<void>) => {
       //dummy reducer to have an undoable action for the entire dragging movement.
@@ -212,6 +295,7 @@ export const {
   setGuideLabel,
   setGuidePos,
   setGuideLength,
+  setParameterValue,
   finishDragging,
 } = patternSlice.actions;
 export const selectPattern = (state: RootState) => state.pattern.present;
@@ -219,4 +303,6 @@ export const selectMirror = (state: RootState) => state.pattern.present.mirror;
 export const selectVertices = (state: RootState) =>
   state.pattern.present.vertices;
 export const selectGuides = (state: RootState) => state.pattern.present.guides;
+export const selectParameters = (state: RootState) =>
+  state.pattern.present.parameters;
 export default patternSlice.reducer;

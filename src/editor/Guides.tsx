@@ -1,4 +1,5 @@
 import { useAppSelector } from "../app/hooks";
+//FIXME: circular dependency prevents importing constants
 import { selectGuides } from "./patternSlice";
 
 export type GuideOld = [number, "hLine" | "vLine"];
@@ -11,6 +12,7 @@ export interface Guide {
   originIndex: number | null;
   pos: number;
   length: number;
+  lengthExpresion: number | string;
   direction: 1 | -1;
   label: string;
 }

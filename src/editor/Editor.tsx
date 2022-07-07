@@ -102,6 +102,7 @@ export default function Editor() {
       originIndex: null,
       pos: guideType === GUIDE_HORIZONTAL ? cursorpt.y : cursorpt.x,
       length: 0,
+      lengthExpresion: 0,
       direction: 1,
       label: "",
     };
