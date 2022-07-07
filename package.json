@@ -12,6 +12,7 @@
     "bezier-js": "^4.1.1",
     "i18next": "^21.5.6",
     "i18next-browser-languagedetector": "^6.1.2",
+    "mathjs": "^10.4.0",
     "node-sass": "^6.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
