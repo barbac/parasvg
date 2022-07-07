@@ -123,7 +123,7 @@ export default function Editor() {
     );
   }
 
-  function handleKeyPress(e: React.KeyboardEvent<HTMLElement>) {
+  function handleKeyPress(e: React.KeyboardEvent<SVGElement>) {
     const key = e.code;
     if (key === "KeyC") {
       if (e.shiftKey) {
@@ -292,8 +292,6 @@ export default function Editor() {
     <div
       className="container"
       style={{ border: "thin solid blue" }}
-      tabIndex={0}
-      onKeyPress={handleKeyPress}
       // contentEditable="true"
     >
       <div className="controls">
@@ -323,6 +321,8 @@ export default function Editor() {
           dispatch(finishDragging());
         }}
         onMouseMove={handleDrag}
+        tabIndex={0}
+        onKeyPress={handleKeyPress}
       >
         <image href={image} height="100%" />
         <Path vertices={vertices} mirror={pattern.mirror} />
