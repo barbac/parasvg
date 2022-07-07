@@ -1,6 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from "react";
-import { pathDataToPoints } from "../pathDataToPoints.js";
-import Handles from "../Handles.jsx";
+import { pathDataToPoints } from "../editor/pathDataToPoints.js"
+// import Handles from "../Handles.jsx";
 
 export function Square() {
   const firstRender = useRef(true);
@@ -72,7 +72,7 @@ export function Square() {
               opacity="1"
               fillOpacity="0"
             />
-            <Handles points={points} />
+            {/* <Handles points={points} /> */}
           </g>
         </svg>
       </div>
