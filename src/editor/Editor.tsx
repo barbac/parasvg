@@ -66,7 +66,7 @@ export default function Editor() {
     dispatch(_setToolState(toolMode));
   const [handleDraggingIndex, setHandleDraggingIndex] = useState(null);
   const [guideDraggingIndex, setGuidDraggingIndex] = useState(null);
-  const [image, setImage] = useState("/pattern.png");
+  const [image, setImage] = useState("pattern.png");
   const [gcodeString, setGcodeString] = useState("");
 
   function addHandle(e: React.MouseEvent<HTMLElement>) {
