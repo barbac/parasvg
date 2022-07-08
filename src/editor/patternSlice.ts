@@ -133,12 +133,19 @@ function computeGuideLength(
 
   let guideLength = 0;
   try {
+    //TODO: use dot notation or something to prevent overwriting duplicated names.
     let scope: { [key: string]: number } = {};
-    state.parameters.forEach((p) => {
-      for (const key in p.parameters) {
-        scope[key] = p.parameters[key];
+    state.parameters.forEach((parameter) => {
+      for (const key in parameter.parameters) {
+        scope[key] = parameter.parameters[key];
       }
     });
+    state.guides.forEach((guide) => {
+      if (guide.label) {
+        scope[guide.label] = guide.length;
+      }
+    });
+
     guideLength = math.evaluate(`${lengthExpresion}`, scope);
   } catch (e) {
     //TODO: report it or give feedback somehow.
