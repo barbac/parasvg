@@ -1,0 +1,191 @@
+{
+   "guides" : [
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 0,
+         "lengthExpresion" : 500,
+         "originIndex" : null,
+         "pos" : 573.462036132812,
+         "type" : "h"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 0,
+         "lengthExpresion" : 30,
+         "originIndex" : null,
+         "pos" : 13.9200716018677,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 8.32,
+         "lengthExpresion" : 8.32,
+         "originIndex" : null,
+         "pos" : 39.9200716018677,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 28.48,
+         "lengthExpresion" : 28.48,
+         "originIndex" : null,
+         "pos" : 102.920071601868,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 64.96,
+         "lengthExpresion" : 64.96,
+         "originIndex" : null,
+         "pos" : 216.920071601868,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 84.8,
+         "lengthExpresion" : 84.8,
+         "originIndex" : null,
+         "pos" : 278.920071601868,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "waist",
+         "length" : 94,
+         "lengthExpresion" : "Waist",
+         "originIndex" : null,
+         "pos" : 307.670071601868,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 75.84,
+         "lengthExpresion" : 75.84,
+         "originIndex" : null,
+         "pos" : 336.462036132812,
+         "type" : "h"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 114.24,
+         "lengthExpresion" : 114.24,
+         "originIndex" : null,
+         "pos" : 216.462036132812,
+         "type" : "h"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 122.88,
+         "lengthExpresion" : 122.88,
+         "originIndex" : null,
+         "pos" : 189.462036132812,
+         "type" : "h"
+      }
+   ],
+   "mirror" : false,
+   "name" : "tank top - back",
+   "parameters" : [
+      {
+         "name" : "body",
+         "parameters" : {
+            "Shoulder" : 20,
+            "Waist" : 94
+         }
+      },
+      {
+         "name" : "customization",
+         "parameters" : {
+            "Waist extra" : 1
+         }
+      }
+   ],
+   "scale" : 0.32,
+   "vertices" : [
+      {
+         "anchorX" : 1,
+         "anchorY" : 0,
+         "type" : "end",
+         "x" : 13.9200716018677,
+         "y" : 573.462036132812
+      },
+      {
+         "anchorX" : 1,
+         "anchorY" : 7,
+         "type" : "end",
+         "x" : 13.9200716018677,
+         "y" : 336.462036132812
+      },
+      {
+         "anchorX" : -1,
+         "anchorY" : 7,
+         "type" : "control",
+         "x" : 76.3358764648438,
+         "y" : 336.462036132812
+      },
+      {
+         "anchorX" : 2,
+         "anchorY" : 8,
+         "type" : "end",
+         "x" : 39.9200716018677,
+         "y" : 216.462036132812
+      },
+      {
+         "anchorX" : 3,
+         "anchorY" : 9,
+         "type" : "end",
+         "x" : 102.920071601868,
+         "y" : 189.462036132812
+      },
+      {
+         "anchorX" : -1,
+         "anchorY" : 8,
+         "type" : "control",
+         "x" : 163.448593139648,
+         "y" : 216.462036132812
+      },
+      {
+         "anchorX" : 4,
+         "anchorY" : 9,
+         "type" : "end",
+         "x" : 216.920071601868,
+         "y" : 189.462036132812
+      },
+      {
+         "anchorX" : 5,
+         "anchorY" : 8,
+         "type" : "end",
+         "x" : 278.920071601868,
+         "y" : 216.462036132812
+      },
+      {
+         "anchorX" : -1,
+         "anchorY" : 7,
+         "type" : "control",
+         "x" : 243.825775146484,
+         "y" : 336.462036132812
+      },
+      {
+         "anchorX" : 6,
+         "anchorY" : 7,
+         "type" : "end",
+         "x" : 307.670074462891,
+         "y" : 336.462036132812
+      },
+      {
+         "anchorX" : 6,
+         "anchorY" : 0,
+         "type" : "end",
+         "x" : 307.670074462891,
+         "y" : 573.462036132812
+      }
+   ]
+}

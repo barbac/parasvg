@@ -1,0 +1,161 @@
+{
+   "guides" : [
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 0,
+         "lengthExpresion" : 1562.5,
+         "originIndex" : null,
+         "pos" : 573.462036132812,
+         "type" : "h"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 0,
+         "lengthExpresion" : 93.75,
+         "originIndex" : null,
+         "pos" : 344.409515380859,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 9.93,
+         "lengthExpresion" : 9.93,
+         "originIndex" : null,
+         "pos" : 373.615397733801,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 31.31,
+         "lengthExpresion" : 31.31,
+         "originIndex" : null,
+         "pos" : 436.497750674977,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "middle",
+         "length" : 50.39,
+         "lengthExpresion" : 50.39,
+         "originIndex" : null,
+         "pos" : 492.615397733801,
+         "type" : "v"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 80.31,
+         "lengthExpresion" : 80.31,
+         "originIndex" : null,
+         "pos" : 337.256153779871,
+         "type" : "h"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 111.59,
+         "lengthExpresion" : 111.59,
+         "originIndex" : null,
+         "pos" : 245.256153779871,
+         "type" : "h"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 121.99,
+         "lengthExpresion" : 121.99,
+         "originIndex" : null,
+         "pos" : 214.667918485754,
+         "type" : "h"
+      },
+      {
+         "direction" : 1,
+         "label" : "",
+         "length" : 130.83,
+         "lengthExpresion" : 130.83,
+         "originIndex" : null,
+         "pos" : 188.667918485754,
+         "type" : "h"
+      }
+   ],
+   "mirror" : true,
+   "name" : "tank top - front",
+   "parameters" : [
+      {
+         "name" : "body",
+         "parameters" : {
+            "Shoulder" : 20,
+            "Waist" : 94
+         }
+      },
+      {
+         "name" : "customization",
+         "parameters" : {
+            "Waist extra" : 1
+         }
+      }
+   ],
+   "scale" : 0.34,
+   "vertices" : [
+      {
+         "anchorX" : 1,
+         "anchorY" : 0,
+         "type" : "end",
+         "x" : 344.409515380859,
+         "y" : 573.462036132812
+      },
+      {
+         "anchorX" : 1,
+         "anchorY" : 5,
+         "type" : "end",
+         "x" : 344.409515380859,
+         "y" : 337.256153779871
+      },
+      {
+         "anchorX" : -1,
+         "anchorY" : null,
+         "type" : "control",
+         "x" : 405.478210449219,
+         "y" : 326.493041992188
+      },
+      {
+         "anchorX" : 2,
+         "anchorY" : 7,
+         "type" : "end",
+         "x" : 373.615397733801,
+         "y" : 214.667918485754
+      },
+      {
+         "anchorX" : 3,
+         "anchorY" : 8,
+         "type" : "end",
+         "x" : 436.497750674977,
+         "y" : 188.667918485754
+      },
+      {
+         "anchorX" : -1,
+         "anchorY" : 6,
+         "type" : "control",
+         "x" : 452.626861572266,
+         "y" : 245.256153779871
+      },
+      {
+         "anchorX" : 4,
+         "anchorY" : 6,
+         "type" : "end",
+         "x" : 492.615397733801,
+         "y" : 245.256153779871
+      },
+      {
+         "anchorX" : 4,
+         "anchorY" : 0,
+         "type" : "end",
+         "x" : 492.615397733801,
+         "y" : 573.462036132812
+      }
+   ]
+}

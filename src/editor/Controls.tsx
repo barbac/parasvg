@@ -73,6 +73,18 @@ export default function Controls({
       })
       .map((name) => name.replace(PATTERN_NAME_PREFIX, "")),
   ];
+
+  //hardcoded samples. Move them to a db later
+  const sample1Label = "tank top - back - sample";
+  if (!window.localStorage.getItem(sample1Label)) {
+    patternNames.push(sample1Label);
+  }
+  const sample2Label = "tank top - front - sample";
+  if (!window.localStorage.getItem("tank top - front - sample")) {
+    patternNames.push(sample2Label);
+  }
+  ///
+
   const options = patternNames.map((name) => (
     <option key={name} value={name}>
       {name}
