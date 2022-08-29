@@ -21,6 +21,8 @@ interface ControlsProps {
   onLoadAction: Function;
   gcode: string;
   onGcodeAction: Function;
+  svg: string;
+  onSvgAction: Function;
 }
 
 export default function Controls({
@@ -31,6 +33,8 @@ export default function Controls({
   onLoadAction,
   gcode,
   onGcodeAction,
+  svg,
+  onSvgAction,
 }: ControlsProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -182,6 +186,22 @@ export default function Controls({
 
         <div>{t("Guides")}</div>
         {guideInputs}
+
+        <div>
+          <div>svg</div>
+          <div>
+            <input
+              type="button"
+              value={t("Generate") as string}
+              onClick={() => onSvgAction()}
+            />
+          </div>
+          <textarea
+            value={svg}
+            readOnly={true}
+            onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+          />
+        </div>
 
         <div>
           <div>{t("gcode")}</div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import * as ReactDOMServer from "react-dom/server";
 import Handles from "./Handles";
 import { Guide } from "./Guides";
 import { Guides, GUIDE_HORIZONTAL, GUIDE_VERTICAL } from "./Guides";
@@ -68,6 +69,7 @@ export default function Editor() {
   const [guideDraggingIndex, setGuidDraggingIndex] = useState(null);
   const [image, setImage] = useState("pattern.png");
   const [gcodeString, setGcodeString] = useState("");
+  const [svgString, setSvgString] = useState("");
 
   function addHandle(e: React.MouseEvent<HTMLElement>) {
     if (e.altKey) {
@@ -120,6 +122,16 @@ export default function Editor() {
   function handleGcodeAction() {
     setGcodeString(
       gcode(pattern.mirror ? mirrorPoints(vertices) : vertices, pattern.scale)
+    );
+  }
+
+  function handleSvgAction() {
+    setSvgString(
+      ReactDOMServer.renderToStaticMarkup(
+        <svg viewBox={viewBox}>
+          <Path vertices={vertices} mirror={pattern.mirror} />
+        </svg>
+      )
     );
   }
 
@@ -303,6 +315,8 @@ export default function Editor() {
           onLoadAction={handleLoadAction}
           gcode={gcodeString}
           onGcodeAction={handleGcodeAction}
+          svg={svgString}
+          onSvgAction={handleSvgAction}
         />
       </div>
       <ToolBox />
